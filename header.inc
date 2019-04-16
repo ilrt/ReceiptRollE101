@@ -20,6 +20,4 @@
             </sourceDesc>
         </fileDesc>
     </teiHeader>
-    <text>
-        <body>
-            <div type="roll">
+    <text type="roll>
