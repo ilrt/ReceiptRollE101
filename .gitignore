@@ -1,3 +1,5 @@
 venv/
 .idea
 roll.xml
+roll.csv
+__pycache__/
