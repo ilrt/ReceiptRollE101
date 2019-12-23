@@ -46,7 +46,7 @@ def marks_to_pence(val):
     """ Turn a mark (or fraction of a mark) to its pence value. """
     marks = marks_regex.match(val).group(2)
     if is_vulgar_fraction(marks):
-        return vulgar_fraction_to_decimal(marks)
+        return vulgar_fraction_to_decimal(marks) * mark_as_pence
     elif marks == 'one' or marks == 'a':
         marks = 1
     else:
