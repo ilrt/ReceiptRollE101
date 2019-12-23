@@ -10,19 +10,121 @@ mark_as_pence = (shilling_as_pence * 13) + 4
 
 # regex for monetary values
 # marks
-marks_regex = re.compile(r'((\d+|½|one|a)\smark(s?))')
+marks_regex = re.compile(r'((\d+|¼|½|¾|one|a)\smark(s?))')
 # pounds, shilling, pence
-psd_regex = re.compile(r'(£(\d+)\.(\d+)s\.(\d+)d\.)')
+psd_regex = re.compile(r'(£(\d+)\.(\d+)s\.((\d+)(¼|½|¾)?)d\.)')
 # pounds and shillings
 ps_regex = re.compile(r'(£(\d+)\.(\d)+s\.)')
 # shillings and pence
-sd_regex = re.compile(r'((\d+)s\.(\d+)d\.)')
+sd_regex = re.compile(r'((\d+)s\.((\d+)(¼|½|¾)?d\.))')
 # shillings
 s_regex = re.compile(r'((\d+)s\.)')
 # pence
-d_regex = re.compile(r'((\d+)d\.)')
+d_regex = re.compile(r'(((\d+)(¼|½|¾)?)d\.)')
 # pound
 p_regex = re.compile(r'(£(\d+))')
+
+
+def is_vulgar_fraction(val):
+    """ Is a character representing a fraction? """
+    return val == '¼' or val == '½' or val == '¾'
+
+
+def vulgar_fraction_to_decimal(val):
+    """ Turn a vulgar fraction into its decimal form. """
+    if val == '¼':
+        return 0.25
+    elif val == '½':
+        return 0.5
+    elif val == '¾':
+        return 0.75
+    else:
+        return None
+
+
+def marks_to_pence(val):
+    """ Turn a mark (or fraction of a mark) to its pence value. """
+    marks = marks_regex.match(val).group(2)
+    if is_vulgar_fraction(marks):
+        return vulgar_fraction_to_decimal(marks)
+    elif marks == 'one' or marks == 'a':
+        marks = 1
+    else:
+        marks = int(marks)
+    return marks * mark_as_pence
+
+
+def psd_to_pence(val):
+    """ Turn pound, shilling and pence to its pence value. """
+
+    psd = psd_regex.match(val)
+
+    if psd.group(6):
+        fraction = vulgar_fraction_to_decimal(psd.group(6))
+    else:
+        fraction = 0
+
+    pence = psd.group(5)
+    shilling = psd.group(3)
+    pound = psd.group(2)
+
+    return (int(pound) * pound_as_pence) + (int(shilling) * shilling_as_pence) + int(pence) + fraction
+
+
+def ps_to_pence(val):
+    """ Turn pound and shilling to its pence value. """
+
+    ps = ps_regex.match(val)
+    pound = ps.group(2)
+    shilling = ps.group(3)
+
+    return (int(pound) * pound_as_pence) + (int(shilling) * shilling_as_pence)
+
+
+def sd_to_pence(val):
+    """ Turn shilling and pence to its pence value. """
+
+    sd = sd_regex.match(val)
+
+    if sd.group(5):
+        fraction = vulgar_fraction_to_decimal(sd.group(5))
+    else:
+        fraction = 0
+
+    pence = sd.group(4)
+    shilling = sd.group(2)
+
+    return (int(shilling) * shilling_as_pence) + int(pence) + fraction
+
+
+def d_to_pence(val):
+    """ Turn pence to its pence value ... i.e. handle any vulgar fractions """
+
+    d = d_regex.match(val)
+
+    if d.group(4):
+        fraction = vulgar_fraction_to_decimal(d.group(4))
+    else:
+        fraction = 0
+
+    pence = d.group(3)
+
+    return int(pence) + fraction
+
+
+def s_to_pence(val):
+    """ Turn shillings into pence """
+
+    s = s_regex.match(val)
+    return int(s.group(2))
+
+
+def p_to_pence(val):
+    """ Turn pounds into pence """
+
+    p = p_regex.match(val)
+    pound = p.group(2)
+    return int(pound) * pound_as_pence
 
 
 def extract_value(text):
@@ -63,48 +165,25 @@ def value_to_pennies(value):
 
     # marks
     if marks_regex.match(value):
-        marks = marks_regex.match(value).group(2)
-        if marks == "½":
-            marks = 0.5
-        elif marks == 'one' or marks == 'a':
-            marks = 1
-        else:
-            marks = int(marks)
-        return marks * mark_as_pence
+        return marks_to_pence(value)
     # £ s. d.
     elif psd_regex.match(value):
-        psd = psd_regex.match(value)
-        pound = psd.group(2)
-        shilling = psd.group(3)
-        pence = psd.group(4)
-        return (int(pound) * pound_as_pence) + (int(shilling) * shilling_as_pence) + int(pence)
+        return psd_to_pence(value)
     # £ s.
     elif ps_regex.match(value):
-        ps = ps_regex.match(value)
-        pound = ps.group(2)
-        shilling = ps.group(3)
-        return (int(pound) * pound_as_pence) + (int(shilling) * shilling_as_pence)
+        return ps_to_pence(value)
     # s. d.
     elif sd_regex.match(value):
-        sd = sd_regex.match(value)
-        shilling = sd.group(2)
-        pence = sd.group(3)
-        return (int(shilling) * shilling_as_pence) + int(pence)
-    # s.
-    elif d_regex.match(value):
-        d = d_regex.match(value)
-        pence = d.group(2)
-        return int(pence)
+        return sd_to_pence(value)
     # d.
+    elif d_regex.match(value):
+        return d_to_pence(value)
+    # s.
     elif s_regex.match(value):
-        s = s_regex.match(value)
-        shilling = s.group(2)
-        return int(shilling) * shilling_as_pence
+        return s_to_pence(value)
     # £
     elif p_regex.match(value):
-        p = p_regex.match(value)
-        pound = p.group(2)
-        return int(pound) * pound_as_pence
+        return p_to_pence(value)
     elif value == 'NOTHING':
         return 0
     else:
@@ -119,7 +198,7 @@ def pennies_to_psd(pennies):
     shillings = pennies // shilling_as_pence
     pennies = pennies % shilling_as_pence
 
-    print("{} {} {}".format(pounds, shillings, pennies))
+    # print("{} {} {}".format(pounds, shillings, pennies))
 
     if pounds > 0 and shillings > 0 and pennies > 0:
         return "£{}.{}s.{}d.".format(pounds, shillings, pennies)
