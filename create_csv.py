@@ -1,6 +1,7 @@
 import csv
 import fileinput
 import re
+import pandas as pd
 
 from receipt_roll import money
 
@@ -25,6 +26,8 @@ months_numerical = {
     "November": "11",
     "December": "12"
 }
+
+data_columns = ['Membrane', 'Term', 'Date', 'Day', 'Source', 'Entry', 'Value', 'Pennies']
 
 
 def date_values(line_val):
@@ -52,9 +55,9 @@ with open('roll.csv', mode='w', encoding='utf-8') as roll_file:
 
     roll_writer = csv.writer(roll_file, delimiter=',', quotechar='"')
 
-    roll_writer.writerow(['Membrane', 'Term', 'Date', 'Day', 'Source', 'Entry', 'Value', 'Pennies'])
+    roll_writer.writerow(data_columns)
 
-    for line in fileinput.input('roll.txt', openhook=fileinput.hook_encoded("utf-8")):
+    for line in fileinput.input('data/source/roll.txt', openhook=fileinput.hook_encoded("utf-8")):
         if re.match(r"^\[m\. \d*\]$", line):
             number = re.search(r"\d+", line).group(0)
         elif re.match(r'^((\[)?[A-Z]{2,})(\])?(( .*)?( [A-Z]{2,}))?(\])?$', line):
