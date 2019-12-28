@@ -27,7 +27,7 @@ def daily_sum_df(df):
 
     for date, group in date_group:
         pence = int(group[PENCE].sum())
-        row = [date, pence, money.pennies_to_psd(pence)]
+        row = [date, pence, money.pence_to_psd(pence)]
         data.append(row)
 
     return pd.DataFrame(data, columns=columns)

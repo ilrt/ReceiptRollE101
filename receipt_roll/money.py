@@ -31,13 +31,25 @@ def is_vulgar_fraction(val):
 
 
 def vulgar_fraction_to_decimal(val):
-    """ Turn a vulgar fraction into its decimal form. """
+    """ Turn a decimal fraction into a vulgar fraction. """
     if val == '¼':
         return 0.25
     elif val == '½':
         return 0.5
     elif val == '¾':
         return 0.75
+    else:
+        return None
+
+
+def decimal_to_vulgar_fraction(val):
+    """ Turn a vulgar fraction into its decimal form. """
+    if val == 0.25:
+        return '¼'
+    elif val == 0.5:
+        return '½'
+    elif val == 0.75:
+        return '¾'
     else:
         return None
 
@@ -116,7 +128,8 @@ def s_to_pence(val):
     """ Turn shillings into pence """
 
     s = s_regex.match(val)
-    return int(s.group(2))
+
+    return int(s.group(2)) * shilling_as_pence
 
 
 def p_to_pence(val):
@@ -159,7 +172,7 @@ def extract_value(text):
         return None
 
 
-def value_to_pennies(value):
+def value_to_pence(value):
     """ Convert the monetary value of pound, shilling and pence to just pence. For example, '£8.13s.4d.'
         will return the 2080 (int) """
 
@@ -190,27 +203,21 @@ def value_to_pennies(value):
         return None
 
 
-def pennies_to_psd(pennies):
-    """ Convert pence back to pound, shilling and pence ... this might not reflect contemporary conventions ..."""
+def pence_to_psd(pennies):
+    """ Convert pence back to pound, shilling and pence ... this might not reflect contemporary conventions."""
 
+    # use modulus and floor to convert back to pound, shillings and pence
     pounds = pennies // pound_as_pence
     pennies = pennies % pound_as_pence
     shillings = pennies // shilling_as_pence
     pennies = pennies % shilling_as_pence
+    fraction = pennies % 1
 
-    # print("{} {} {}".format(pounds, shillings, pennies))
+    # format the various bits ... pound, shillings and pence are cast to integers to remove .0
+    pound_fmt = "£{}.".format(int(pounds)) if pounds > 0 else ""
+    shilling_fmt = "{}s.".format(int(shillings)) if shillings > 0 else ""
+    # we need to check for quarter fractions
+    fraction_fmt = decimal_to_vulgar_fraction(fraction) if fraction > 0 else ""
+    pennies_fmt = "{}{}d.".format(int(pennies), fraction_fmt) if pennies > 0 or fraction > 0 else ""
 
-    if pounds > 0 and shillings > 0 and pennies > 0:
-        return "£{}.{}s.{}d.".format(pounds, shillings, pennies)
-    if pounds > 0 and shillings > 0 and pennies == 0:
-        return "£{}.{}s.".format(pounds, shillings)
-    if pounds > 0 and shillings == 0 and pennies == 0:
-        return "£{}".format(pounds)
-    if pounds == 0 and shillings > 0 and pennies > 0:
-        return "{}s.{}d.".format(shillings, pennies)
-    if pounds == 0 and shillings > 0 and pennies == 0:
-        return "{}s.".format(shillings)
-    if pounds == 0 and shillings == 0 and pennies > 0:
-        return "{}d.".format(pennies)
-    else:
-        return "Unmatched"
+    return "{}{}{}".format(pound_fmt, shilling_fmt, pennies_fmt)

@@ -95,7 +95,7 @@ with open('roll.csv', mode='w', encoding='utf-8') as roll_file:
             if number is not None and place is not None and len(line.strip()) > 0:
                 val = money.extract_value(line)
                 if val is not None:
-                    pennies = money.value_to_pennies(val)
+                    pennies = money.value_to_pence(val)
                 else:
                     pennies = None
                 roll_writer.writerow([number, term, date, day_of_week, place, line.strip(), val, pennies])
