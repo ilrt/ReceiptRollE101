@@ -1,5 +1,6 @@
 venv/
 .idea
-roll.xml
-roll.csv
+data/roll_*.xml
+data/roll_*.csv
+data/daily_*.csv
 __pycache__/

@@ -16,7 +16,7 @@ out = open('roll.xml', 'w')
 
 out.write(header_data)
 
-for line in fileinput.input('roll.txt'):
+for line in fileinput.input('roll_1301.txt'):
 
     if in_month is False:
         out.write("<div type='month'>")
