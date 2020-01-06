@@ -10,7 +10,7 @@ mark_as_pence = (shilling_as_pence * 13) + 4
 
 # regex for monetary values
 # marks
-marks_regex = re.compile(r'((\d+|¼|½|¾|one|a)\smark(s?))')
+marks_regex = re.compile(r'((\d+|¼|½|¾|One|one|a)\smark(s?))')
 # pounds, shilling, pence
 psd_regex = re.compile(r'(£(\d+)\.(\d+)s\.((\d+)(¼|½|¾)?)d\.)')
 # pounds and shillings
@@ -59,7 +59,7 @@ def marks_to_pence(val):
     marks = marks_regex.match(val).group(2)
     if is_vulgar_fraction(marks):
         return vulgar_fraction_to_decimal(marks) * mark_as_pence
-    elif marks == 'one' or marks == 'a':
+    elif marks.lower() == 'one' or marks == 'a':
         marks = 1
     else:
         marks = int(marks)
