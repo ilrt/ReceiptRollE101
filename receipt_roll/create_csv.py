@@ -3,18 +3,10 @@ import re
 import os
 import pandas as pd
 
-from receipt_roll import money
-
+from receipt_roll import money, common
 import settings
 
-
-date_regex = re.compile(r'^(\w*) (\d*) (January|February|March|April|May|June|July|August|September|October|November'
-                        r'|December)')
-
-day_regex = re.compile(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)')
-
-receipt_regex = re.compile('^Receipt(s?)')
-
+# so we can create the MM in a YYYY-MM-DD format
 months_numerical = {
     "January": "01",
     "February": "02",
@@ -30,12 +22,21 @@ months_numerical = {
     "December": "12"
 }
 
-date_col = 'Date'
-value_col = 'Value'
-pence_col = 'Pence'
-data_columns = ['Membrane', 'Term', date_col, 'Day', 'Source', 'Entry', value_col, pence_col]
+# regex for date matching
+date_regex = re.compile(r'^(\w*) (\d*) (January|February|March|April|May|June|July|August|September|October'
+                        r'|November|December)')
 
-daily_sums_columns = [date_col, value_col, pence_col]
+# regex for finding days of the week
+day_regex = re.compile(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)')
+
+# regex for finding 'Receipt' headings
+receipt_regex = re.compile('^Receipt(s?)')
+
+# regex for membrane numbers
+membrane_regex = re.compile(r'^\[m\. \d*\]$')
+
+# regex for a place declaration
+place_regex = re.compile(r'^((\[)?[A-Z]{2,})(\])?(( .*)?( [A-Z]{2,}))?(\])?$')
 
 
 def date_values(line_val):
@@ -53,71 +54,101 @@ def date_values(line_val):
     return day, "{}-{}-{}".format(year_val, month_val, day_val)
 
 
-number = None
-place = None
-day_of_week = None
-date = None
-term = None
+def parse_roll():
+    # heading for the main dataset
+    data_columns = [common.MEM_COL, common.TERM_COL, common.DATE_COL, common.DAY_COL, common.SOURCE_COL,
+                    common.DETAILS_COL, common.VAL_COL, common.PENCE_COL]
 
-data = []
-daily_sums = []
+    # headings for the daily sums
+    daily_sums_columns = [common.DATE_COL, common.VAL_COL, common.PENCE_COL]
 
-for line in fileinput.input(settings.ROLL_TXT, openhook=fileinput.hook_encoded("utf-8")):
-    if re.match(r"^\[m\. \d*\]$", line):
-        number = re.search(r"\d+", line).group(0)
-    elif re.match(r'^((\[)?[A-Z]{2,})(\])?(( .*)?( [A-Z]{2,}))?(\])?$', line):
-        place = line.strip()
-        if '[DUBLIN]' in place:
-            place = 'DUBLIN'
-    elif date_regex.match(line):
-        date__ = date_values(line)
-        day_of_week = date__[0]
-        date = date__[1]
-    elif 'Gross receipt' in line:
-        if 'Michaelmas' in line:
-            term = 'Michaelmas'
-        elif 'Trinity' in line:
-            term = 'Trinity'
-        elif 'Hilary' in line:
-            term = 'Hilary'
-        elif 'Easter' in line:
-            term = 'Easter'
-    elif 'DAILY SUM RECEIVED' in line or re.match('^SUM:', line):
-        tmp = line.split(':')
-        val = tmp[1].strip()
-        daily_sums.append([date, val, money.value_to_pence(val)])
-        # roll_writer.writerow([number, term, date, '', '', '', val, ''])
-        pass
-    elif re.match('^SUM OF', line) or re.match('^SUM MEDII', line):
-        pass
-    elif re.match('^WEEKLY SUM', line) or re.match('^WEEKLY RECEIPT', line):
-        pass
-        # tmp = line.split(':')
-        # if len(tmp) == 2:
-        #     val = tmp[1].strip()
-        #     roll_writer.writerow([number, term, date, '', '', '', '', val])
-    elif 'MONTHLY SUM' in line or 'TOTAL' in line:
-        pass
-    elif day_regex.match(line):
-        pass
-    elif receipt_regex.match(line):
-        pass
-    else:
-        if number is not None and place is not None and len(line.strip()) > 0:
-            val = money.extract_value(line)
-            if val is not None:
-                pennies = money.value_to_pence(val)
-            else:
-                pennies = None
-            data.append([number, term, date, day_of_week, place, line.strip(), val, pennies])
+    # to hold the data
+    data = []
+    daily_sums = []
+
+    # keep track of values we use in rows (some span multiple rows)
+    number = None
+    place = None
+    day_of_week = None
+    date = None
+    term = None
+
+    # go through each line of the transcript
+    for line in fileinput.input(settings.ROLL_TXT, openhook=fileinput.hook_encoded("utf-8")):
+        # do we have a declaration of a membrane number
+        if membrane_regex.match(line):
+            number = re.search(r"\d+", line).group(0)
+        # or are we declaring a place?
+        elif place_regex.match(line):
+            place = line.strip()
+            if '[DUBLIN]' in place:
+                place = 'DUBLIN'
+        # or are we declaring with a date declaration?
+        elif date_regex.match(line):
+            date__ = date_values(line)
+            day_of_week = date__[0]
+            date = date__[1]
+        # or are we declaring the financial term?
+        elif 'Gross receipt' in line:
+            if 'Michaelmas' in line:
+                term = 'Michaelmas'
+            elif 'Trinity' in line:
+                term = 'Trinity'
+            elif 'Hilary' in line:
+                term = 'Hilary'
+            elif 'Easter' in line:
+                term = 'Easter'
+        # or are we getting a daily sum?
+        elif 'DAILY SUM RECEIVED' in line or re.match('^SUM:', line):
+            tmp = line.split(':')
+            val = tmp[1].strip()
+            daily_sums.append([date, val, money.value_to_pence(val)])
+        # ignore these sums
+        elif re.match('^SUM OF', line) or re.match('^SUM MEDII', line):
+            pass
+        # ignore these sums
+        elif re.match('^WEEKLY SUM', line) or re.match('^WEEKLY RECEIPT', line):
+            pass
+        # ignore these sums
+        elif 'MONTHLY SUM' in line or 'TOTAL' in line:
+            pass
+        # ignore these sums
+        elif day_regex.match(line):
+            pass
+        # ignore these sums
+        elif receipt_regex.match(line):
+            pass
+        # this should be some details ...
+        else:
+            # only process if we have a membrane number, place and the line has content
+            if number is not None and place is not None and len(line.strip()) > 0:
+                # extract the value from the details
+                val = money.extract_value(line)
+                # if we extract details, get the value
+                if val is not None:
+                    # convert to pence
+                    pennies = money.value_to_pence(val)
+                else:
+                    pennies = None
+                # some entries don't have a value but refer to the line above
+                if val is None and pennies is None and 'the same' in line.lower():
+                    pennies = data[-1][-1]
+                    val = data[-1][-2]
+                # add the row to the data array
+                data.append([number, term, date, day_of_week, place, line.strip(), val, pennies])
+
+    # create the data directory if necessary
+    if not os.path.exists(settings.DATA_DIR):
+        os.makedirs(settings.DATA_DIR)
+
+    # use pandas to write the data csv
+    df = pd.DataFrame(data, columns=data_columns)
+    df.to_csv(settings.ROLL_CSV, index=False)
+
+    # use pandas to write the daily sums csv
+    df2 = pd.DataFrame(daily_sums, columns=daily_sums_columns)
+    df2.to_csv(settings.DAILY_SUMS_CSV, index=False)
 
 
-if not os.path.exists(settings.DATA_DIR):
-    os.makedirs(settings.DATA_DIR)
-
-df = pd.DataFrame(data, columns=data_columns)
-df.to_csv(settings.ROLL_CSV, index=False)
-
-df2 = pd.DataFrame(daily_sums, columns=daily_sums_columns)
-df2.to_csv(settings.DAILY_SUMS_CSV, index=False)
-
+if __name__ == '__main__':
+    parse_roll()
