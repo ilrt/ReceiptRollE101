@@ -14,7 +14,9 @@ marks_regex = re.compile(r'((\d+|¼|½|¾|One|one|a)\smark(s?))')
 # pounds, shilling, pence
 psd_regex = re.compile(r'(£(\d+)\.(\d+)s\.((\d+)(¼|½|¾)?)d\.)')
 # pounds and shillings
-ps_regex = re.compile(r'(£(\d+)\.(\d)+s\.)')
+ps_regex = re.compile(r'(£(\d+)\.(\d+)+s\.)')
+# pounds and pence
+pd_regex = re.compile(r'(£(\d+)\.((\d+)(¼|½|¾)?)d\.)')
 # shillings and pence
 sd_regex = re.compile(r'((\d+)s\.((\d+)(¼|½|¾)?d\.))')
 # shillings
@@ -93,6 +95,22 @@ def ps_to_pence(val):
     return (int(pound) * pound_as_pence) + (int(shilling) * shilling_as_pence)
 
 
+def pd_to_pence(val):
+    """ Turn pounds and pence to its pence value """
+
+    pd = pd_regex.match(val)
+
+    if pd.group(5):
+        fraction = vulgar_fraction_to_decimal(pd.group(5))
+    else:
+        fraction = 0
+
+    pence = pd.group(4)
+    pound = pd.group(2)
+
+    return (int(pound) * pound_as_pence) + int(pence) + fraction
+
+
 def sd_to_pence(val):
     """ Turn shilling and pence to its pence value. """
 
@@ -154,6 +172,9 @@ def extract_value(text):
     # £ s.
     elif ps_regex.search(text):
         return ps_regex.search(text).group(1)
+    # £ d.
+    elif pd_regex.search(text):
+        return pd_regex.search(text).group(1)
     # s. d.
     elif sd_regex.search(text):
         return sd_regex.search(text).group(1)
@@ -185,6 +206,8 @@ def value_to_pence(value):
     # £ s.
     elif ps_regex.match(value):
         return ps_to_pence(value)
+    elif pd_regex.match(value):
+        return pd_to_pence(value)
     # s. d.
     elif sd_regex.match(value):
         return sd_to_pence(value)
