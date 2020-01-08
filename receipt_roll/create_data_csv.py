@@ -23,8 +23,8 @@ months_numerical = {
 }
 
 # regex for date matching
-date_regex = re.compile(r'^(\w*) (\d*) (January|February|March|April|May|June|July|August|September|October'
-                        r'|November|December)')
+date_regex = re.compile(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)(.+)? (\d+) (January|February|'
+                        r'March|April|May|June|July|August|September|October|November|December)')
 
 # regex for finding days of the week
 day_regex = re.compile(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)')
@@ -42,8 +42,8 @@ place_regex = re.compile(r'^((\[)?[A-Z]{2,})(\])?(( .*)?( [A-Z]{2,}))?(\])?$')
 def date_values(line_val):
     date_match = date_regex.match(line_val)
     day = date_match.group(1)
-    day_val = date_match.group(2)
-    month_val = date_match.group(3)
+    day_val = date_match.group(3)
+    month_val = date_match.group(4)
     if len(day_val) == 1:
         day_val = "0{}".format(day_val)
     month_val = months_numerical[month_val]
@@ -104,7 +104,7 @@ def parse_roll():
             val = tmp[1].strip()
             daily_sums.append([date, val, money.value_to_pence(val)])
         # ignore these sums
-        elif re.match('^SUM OF', line) or re.match('^SUM MEDII', line):
+        elif re.match('^SUM OF', line) or re.match('^SUM FOR', line) or re.match('^SUM MEDII', line):
             pass
         # ignore these sums
         elif re.match('^WEEKLY SUM', line) or re.match('^WEEKLY RECEIPT', line):
