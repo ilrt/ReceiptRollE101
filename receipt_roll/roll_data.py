@@ -8,6 +8,11 @@ def roll_as_df():
     return pd.read_csv(settings.ROLL_CSV)
 
 
+def daily_sums_df():
+    """ Return the CSV file with the daily sums """
+    return pd.read_csv(settings.DAILY_SUMS_CSV)
+
+
 def daily_sum_from_roll_df(df):
     """ Create a new data frame of daily sums in pence and the equivalent £.s.d. from the roll data """
 
@@ -17,8 +22,13 @@ def daily_sum_from_roll_df(df):
     date_group = df.groupby(common.DATE_COL)
 
     for date, group in date_group:
-        pence = int(group[common.PENCE_COL].sum())
+        pence = group[common.PENCE_COL].sum()
         row = [date, pence, money.pence_to_psd(pence)]
         data.append(row)
 
     return pd.DataFrame(data, columns=columns)
+
+
+def compare_daily_sums_df():
+    """ Return the comparison files as a Pandas data frame. """
+    return pd.read_csv(settings.DAILY_SUMS_COMPARE_CSV)
