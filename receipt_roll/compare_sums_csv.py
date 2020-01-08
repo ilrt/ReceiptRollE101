@@ -1,13 +1,21 @@
+"""
+    Creates a CSV files that compares daily sums added by the Exchequer clerk with those calculated by
+    pandas. This is useful for spotting (1) errors in my parsing of the data; (2) errors in the transcript;
+    or (3), errors by the scribe.
+"""
+
 import settings
 from receipt_roll import roll_data, common
 import pandas as pd
 
 
 def compare_pence(row):
+    """ Compare the clerks sums with our own! """
     return row['Roll'] == row['Computed']
 
 
 def generate_report():
+    """ Create a comparison report. """
 
     # get the roll data
     df_roll = roll_data.roll_as_df()
