@@ -51,6 +51,25 @@ class TestPoundShillingToPence(unittest.TestCase):
         self.assertEqual(money.ps_to_pence("£11.6s."), 2712)
 
 
+class TestPoundPenceToPence(unittest.TestCase):
+    """ Test the conversion of £.d. to pence """
+
+    def test_1(self):
+        self.assertEqual(money.pd_to_pence("£1.4d."), 244)
+
+    def test_2(self):
+        self.assertEqual(money.pd_to_pence("£11.4d."), 2644)
+
+    def test_3(self):
+        self.assertEqual(money.pd_to_pence("£1.4¼d."), 244.25)
+
+    def test_4(self):
+        self.assertEqual(money.pd_to_pence("£1.4½d."), 244.5)
+
+    def test_5(self):
+        self.assertEqual(money.pd_to_pence("£1.4¾d."), 244.75)
+
+
 class TestShillingPenceToPence(unittest.TestCase):
     """ Test the conversion of s.d. to pence """
 
@@ -144,6 +163,9 @@ class TestValueToPence(unittest.TestCase):
     def test_12(self):
         self.assertEqual(money.value_to_pence("£11.6s."), 2712)
 
+    def test_12b(self):
+        self.assertEqual(money.value_to_pence("£14.15s."), 3540)
+
     def test_13(self):
         self.assertEqual(money.value_to_pence("6s.4d."), 76)
 
@@ -182,6 +204,21 @@ class TestValueToPence(unittest.TestCase):
 
     def test_25(self):
         self.assertEqual(money.value_to_pence("£12."), 2880)
+
+    def test_26(self):
+        self.assertEqual(money.value_to_pence("£1.4d."), 244)
+
+    def test_27(self):
+        self.assertEqual(money.value_to_pence("£11.4d."), 2644)
+
+    def test_28(self):
+        self.assertEqual(money.value_to_pence("£1.4¼d."), 244.25)
+
+    def test_29(self):
+        self.assertEqual(money.value_to_pence("£1.4½d."), 244.5)
+
+    def test_30(self):
+        self.assertEqual(money.value_to_pence("£1.4¾d."), 244.75)
 
 
 if __name__ == '__main__':
