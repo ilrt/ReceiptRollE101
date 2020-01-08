@@ -40,7 +40,7 @@ John de Trim, £10 of a fine for the release of a suit for peace.
 The same John, 5 marks to have licence to plead by bill.
 DUBLIN
 Nicholas de Cruis, 50s. for the wardship and marriage of the lands and the heir of Jordan Locard.
-SUM: £17.10d.
+SUM: £17.20d.
 
 Tuesday 3 October
 DUBLIN
@@ -136,8 +136,8 @@ Jordan de Exeter, £10.6s.8d. of the rent of Admethan.
 KILKENNY
 Thomas McDermot and Bren, 46s.8d. of a fine to have peace, by Jordan de Exeter in cows [in vaccis].
 CONNACHT
-Of the rent of the lands late of Adam le Fleming, felon, 16d. by the same Jordan, for two terms.
-The same receipt from the same of the lands of William  le Fleming.
+Of the rent of the lands late of Adam le Fleming, felon, 22s.6d. by the same Jordan, for two terms.
+The same receipt from the same, 16d., of the lands of William le Fleming.
 DROGHEDA IN URIEL
 Thomas Page, ½ mark for contempt.
 URIEL
@@ -482,7 +482,7 @@ Thursday 16 November
 DUBLIN
 Of the farm of Tassagard, £7.10s. by Robert le Deveneis.
 Of the same, £8.6s.8d. by William le Archer.
-SUM: £15.16s.
+SUM: £15.16s.8d.
 
 Friday 17 November
 DUBLIN
@@ -1185,7 +1185,7 @@ DUBLIN
 Adam de Karrik, 8s.4d. of a fine for the death of J. de Suttone, by Adam de Houethe.
 CONNACHT
 The rent of Admekin, £13, by Walter de Ridlesford.
-SUM: £30.18s.6d.
+SUM: £30.18s.7d.
 
 Friday 11 May
 URIEL
@@ -1377,7 +1377,7 @@ The promised aid to the king in the county, £87.7s.9½d., by the same.
 
 [m. 13]
 ESCHEATRY
-Walter de la Haie, £6.19s. of the issues of the escheatry, by N. de Chiltenham.
+Walter de la Haie, £6.19d. of the issues of the escheatry, by N. de Chiltenham.
 Walter, 10 marks of the same, by the prior of Kilmainham.
 LIMERICK
 John Lovelenche, 5s. of a fine for trespass.
@@ -1462,7 +1462,7 @@ Tuesday 5 June
 DUBLIN
 Richard de Exeter, sheriff, 12s. of the arrears on his account, by Richard de Cruis.
 LIMERICK
-Of the aid promised to the king in the county, £8.12s.8d, by Robert Bagot, sheriff.
+Of the aid promised to the king in the county, £8.12s.8d., by Robert Bagot, sheriff.
 Of the same, £119, by the same sheriff, in victuals at Cork.
 DUBLIN
 John le Decer, £18.3s.4½d.  of the arrears of his account of victuals for Scotland.
@@ -1520,7 +1520,7 @@ William de Stokes, a mark for having a writ.
 Adam de Stokes and Cecilia, his wife, ½ mark for licence to make an agreement.
 Richard Druseleye, ½ mark for having a writ.
 Richard de London, ½ mark for he did not pay on the day.
-Robert Roth, 6s.8d., for unjust detention of debts.
+Robert Roth, 6s.5d., for unjust detention of debts.
 John, the bailiff of Killen, 5s. for him and his pledges as he came not when attached.
 Geoffrey de Geneville, 7s.7d. of the debts of divers persons.
 KILDARE
