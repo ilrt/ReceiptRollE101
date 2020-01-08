@@ -1,3 +1,6 @@
+""" Parses the text document (transcript) and creates to CSV files. One has the individual
+    entries of sums given in the roll and the other has the daily total of sums recorded by the Exchequer clerk. """
+
 import fileinput
 import re
 import os
