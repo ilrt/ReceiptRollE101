@@ -3,4 +3,5 @@ venv/
 data/roll_*.xml
 data/roll_*.csv
 data/daily_*.csv
+data/receipt_roll_1301.xlsx
 __pycache__/
