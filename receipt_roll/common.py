@@ -12,6 +12,7 @@ PENCE_COL = 'Pence'         # The pence equivalent of the value, easier for comp
 SOURCE_COL = 'Source'       # The source (often geographical), e.g. 'Dublin'
 DETAILS_COL = 'Details'     # The details, e.g. 'The same Nicholas, ½ mark for falsely raising hue and cry.'
 PSD_COL = '£.s.d.'          # £.s.d. (computed from the Pence)
+PEOPLE_COL = 'People'       # people (extracted from the details)
 
 # Sheet names
 DATA_SHEET = 'Data'

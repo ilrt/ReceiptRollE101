@@ -9,6 +9,9 @@ ROLL_TXT = DATA_DIR + '/roll_1301.txt'
 # roll data as csv
 ROLL_CSV = DATA_DIR + '/roll_1301.csv'
 
+# roll data with extracted entities
+ROLL_WITH_ENTITIES_CSV = DATA_DIR + '/roll_entities_1301.csv'
+
 # daily sums as csv
 DAILY_SUMS_CSV = DATA_DIR + '/daily_sums_1301.csv'
 
