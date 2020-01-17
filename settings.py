@@ -29,3 +29,6 @@ PLACES_NOUNS_TXT = DATA_DIR + '/nouns_for_places.txt'
 
 # words to omit from the 'Source' column when extracting places
 SOURCE_STOP_WORDS_TXT = DATA_DIR + '/sources_stop_words.txt'
+
+# stop words used when extracting keywords
+KEYWORDS_STOP_WORDS_TXT = DATA_DIR + '/keywords_stop_words.txt'

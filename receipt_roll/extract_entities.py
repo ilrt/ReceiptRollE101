@@ -14,22 +14,6 @@ def load_words_into_array(file):
     return [word.strip() for word in words]
 
 
-def load_places_nouns():
-    """ Load a list of nouns <NN> that precede a preposition <IN> and proper nouns <NNP>, e.g town of Cork.
-        We use this to help identify places."""
-    return load_words_into_array(settings.PLACES_NOUNS_TXT)
-
-
-def load_sources_stop_words():
-    """ Load a list of words used in the 'Source' column that doesn't represent a geographical areas. """
-    return load_words_into_array(settings.SOURCE_STOP_WORDS_TXT)
-
-
-def load_keyword_stop_words():
-    """ Load a list of words that we omit from keyword extraction"""
-    return load_words_into_array(settings.SOURCE_STOP_WORDS_TXT)
-
-
 # --------- constants used in the module
 
 # label to identify a chunk that possibly represents a name
@@ -62,13 +46,14 @@ marks_regex = re.compile(r'((\d+|¼|½|¾|One|one|a)\smark(s?))')
 # Omitted value place-holder
 OVP_LABEL = 'OVP'
 
-STOP_WORDS = ['divers', 'person', 'persons', 'other', 'others', 'associates', 'nothing']
+# stop words not to be used in keywords
+KEYWORD_STOP_WORDS = load_words_into_array(settings.KEYWORDS_STOP_WORDS_TXT)
 
-# nouns located to proper nouns that suggest a place
-PLACES_NOUNS = load_places_nouns()
+# Load a list of words used in the 'Source' column that doesn't represent a geographical areas.
+PLACES_NOUNS = load_words_into_array(settings.PLACES_NOUNS_TXT)
 
-# sources that aren't places
-SOURCES_STOP_WORDS = load_sources_stop_words()
+# Load a list of words used in the 'Source' column that doesn't represent a geographical areas
+SOURCES_STOP_WORDS = load_words_into_array(settings.SOURCE_STOP_WORDS_TXT)
 
 
 def add_entities_to_data_csv():
@@ -255,7 +240,7 @@ def extract_keywords(row):
     keywords = [keyword for keyword in keywords if len(keyword) > 1]
 
     # remove stop words
-    keywords = [keyword for keyword in keywords if keyword not in STOP_WORDS]
+    keywords = [keyword for keyword in keywords if keyword not in KEYWORD_STOP_WORDS]
 
     return '; '.join(keywords)
 
@@ -279,7 +264,7 @@ def details_word_frequency():
 
     tokens = [token.lower() for token in tokens]
 
-    tokens = [token for token in tokens if token not in STOP_WORDS]
+    tokens = [token for token in tokens if token not in KEYWORD_STOP_WORDS]
 
     freq = FreqDist(tokens)
 
