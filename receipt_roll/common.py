@@ -12,7 +12,10 @@ PENCE_COL = 'Pence'         # The pence equivalent of the value, easier for comp
 SOURCE_COL = 'Source'       # The source (often geographical), e.g. 'Dublin'
 DETAILS_COL = 'Details'     # The details, e.g. 'The same Nicholas, ½ mark for falsely raising hue and cry.'
 PSD_COL = '£.s.d.'          # £.s.d. (computed from the Pence)
-PEOPLE_COL = 'People'       # people (extracted from the details)
+# data extracted from the details column
+PEOPLE_COL = 'People'       # people
+KEYWORDS_COL = 'Keywords'   # keywords
+PLACES_COL = 'Places'       # places
 
 # Sheet names
 DATA_SHEET = 'Data'
@@ -47,4 +50,12 @@ def have_compare_data():
     if not os.path.isfile(settings.DAILY_SUMS_COMPARE_CSV):
         if not os.path.isfile(settings.DAILY_SUMS_COMPARE_CSV):
             print("Missing " + settings.DAILY_SUMS_COMPARE_CSV + "; you need to generate it. See README.")
+            sys.exit()
+
+
+def have_entities_data():
+    """ Have we extracted the entities """
+    if not os.path.isfile(settings.ROLL_WITH_ENTITIES_CSV):
+        if not os.path.isfile(settings.ROLL_WITH_ENTITIES_CSV):
+            print("Missing " + settings.ROLL_WITH_ENTITIES_CSV + "; you need to generate it. See README.")
             sys.exit()

@@ -20,3 +20,12 @@ DAILY_SUMS_COMPARE_CSV = DATA_DIR + '/daily_sums_compare.csv'
 
 # receipt roll (number of sheets)
 RECEIPT_ROLL_EXCEL = DATA_DIR + '/receipt_roll_1301.xlsx'
+
+# details plain text corpus
+DETAILS_TEXT_CORPUS = DATA_DIR + '/details_corpus.txt'
+
+# words to help us find spaces
+PLACES_NOUNS_TXT = DATA_DIR + '/nouns_for_places.txt'
+
+# words to omit from the 'Source' column when extracting places
+SOURCE_STOP_WORDS_TXT = DATA_DIR + '/sources_stop_words.txt'

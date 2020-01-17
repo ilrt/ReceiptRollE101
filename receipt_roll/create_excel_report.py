@@ -13,13 +13,13 @@ def generate_report():
     """ Create Pandas data frames from CSV and create the Excel file. """
 
     # check we have the roll data we need
-    common.have_roll_data()
+    common.have_entities_data()
     common.have_sums_data()
     common.have_compare_data()
 
     # get the data frames
     df_sums = roll_data.daily_sums_df()
-    df_roll = roll_data.roll_as_df()
+    df_roll = roll_data.roll_with_entities_df()
     df_compare = roll_data.compare_daily_sums_df()
 
     # write to an Excel file

@@ -29,6 +29,11 @@ def daily_sum_from_roll_df(df):
     return pd.DataFrame(data, columns=columns)
 
 
+def roll_with_entities_df():
+    """ Return the CSV file of the roll with entities as a pandas data frame"""
+    return pd.read_csv(settings.ROLL_WITH_ENTITIES_CSV)
+
+
 def compare_daily_sums_df():
     """ Return the comparison files as a Pandas data frame. """
     return pd.read_csv(settings.DAILY_SUMS_COMPARE_CSV)
