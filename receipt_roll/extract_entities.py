@@ -5,8 +5,6 @@ import re
 import settings
 
 
-# --------- methods that load content into arrays
-
 def load_words_into_array(file):
     """ Load list of words from a text file into an array. """
     with open(file, 'r') as file:
@@ -22,8 +20,19 @@ POSSIBLE_PERSON_LABEL = 'PP'
 # label to identify a chunk that possibly represents a place
 POSSIBLE_PLACE_LABEL = 'PPL'
 
+# regex for toponyms and possible occupations, e,g. 'Richard fitz John' and 'Richard fitz John, sheriff'
+PERSON_REGEX_TOPONYM = '<NNP><NNP|FW>*<NNP><NNP>?(<,><NN>)?(<[^,|^OVP].*>*<,|.>)?'
+
+# regex for single name and occupation and possible place, e.g. 'Richard, vicar of the church of Moling'
+PERSON_REGEX_OCCUPATION = '<NNP><,><DT>?<NN><[^,].*>*<,|.>'
+
+# slightly different occupation regex
+PERSON_REGEX_OCCUPATION_2 = '<NNP><DT><NN>'
+
 # regex for POS labels that might construct provide a person name
-PERSON_GRAMMAR_REGEX = POSSIBLE_PERSON_LABEL + ': {<NNP><NNP|FW>*<NNP><NNP>?}'
+PERSON_GRAMMAR_REGEX = "{0}: {{{1}|{2}|{3}}}".format(POSSIBLE_PERSON_LABEL, PERSON_REGEX_TOPONYM,
+                                                     PERSON_REGEX_OCCUPATION,
+                                                     PERSON_REGEX_OCCUPATION_2)
 
 # regex for POS labels that might construct provide a place
 PLACE_GRAMMAR_REGEX = POSSIBLE_PLACE_LABEL + ': { (<NN>|<NNS>)<IN><NNP><NNP>?(<CC><NNP>)?}'
@@ -104,8 +113,11 @@ def apply_extract_places(row):
         if area_place not in places:
             places.append(area_place)
 
+    # lets add toponyms in people to the mix ...
+    toponyms = extract_place_from_toponym(row[common.PEOPLE_COL])
+
     # return the values as a string delimited by a semicolon
-    return '; '.join(places)
+    return '; '.join(places + toponyms)
 
 
 def clean_details(details):
@@ -181,18 +193,32 @@ def extract_people(text):
                 # reconstruct the name
                 name = []
                 for num in range(len(child)):
-                    name.append(child[num][0])
+                    if child[num][1] == 'CC':
+                        people.append(' '.join(name))
+                        name.clear()
+                    else:
+                        name.append(child[num][0])
                 # if we have the bits of name, reconstruct
                 if len(name) > 0:
-                    people.append(' '.join(name))
+                    # if the last item is a comma or full stop, drop it
+                    if name[-1] == ',' or name[-1] == '.':
+                        name = name[:-1]
+                    # remove any space preceding commas
+                    people.append(' '.join(name).replace(' , ', ', '))
 
     if len(people) > 0:
+        if 'others' in people:
+            people.remove('others')
         return "; ".join(people)
     else:
         return None
 
 
 def extract_places(text):
+    """ Take an entry from the roll and try and extract any places. We use the default NLTK POS tagger
+        to identify nouns, prepositions etc. We then use a regex to find patterns that might be places
+        by looking at nearby nouns, such as 'city' in 'city of Dublin'. """
+
     # turn into tokens
     tokens = tokenize_tag_text(text)
 
@@ -213,6 +239,7 @@ def extract_places(text):
                     for num in range(len(child)):
                         if child[num][1] == 'NNP':
                             place.append(child[num][0])
+                        # if we have 'and' then it might be talking about more than one place
                         elif child[num][1] == 'CC':
                             places.append(' '.join(place))
                             place.clear()
@@ -243,6 +270,25 @@ def extract_keywords(row):
     keywords = [keyword for keyword in keywords if keyword not in KEYWORD_STOP_WORDS]
 
     return '; '.join(keywords)
+
+
+def extract_place_from_toponym(people):
+    toponyms = []
+
+    if people:
+        people_tokens = people.split(';')
+
+        for people in people_tokens:
+            if ' de ' in people:
+                tmp = people.split(' de')
+                if len(tmp) > 1:
+                    place = tmp[1]
+                    if ', ' in place:
+                        place = place.split(', ')[0]
+                    if place not in toponyms:
+                        toponyms.append(place)
+
+    return toponyms
 
 
 def create_details_corpus():
