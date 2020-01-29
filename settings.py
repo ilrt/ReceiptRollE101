@@ -3,6 +3,9 @@ import os
 # location of the data files
 DATA_DIR = os.path.dirname(os.path.abspath(__file__)) + '/data'
 
+# location of the stop words
+STOP_WORDS_DIR = DATA_DIR + '/stop_words'
+
 # the transcript created by Paul Dryburgh and Brendan Smith of the 1301/2 Irish Exchequer receipt roll
 ROLL_TXT = DATA_DIR + '/roll_1301.txt'
 
@@ -25,10 +28,10 @@ RECEIPT_ROLL_EXCEL = DATA_DIR + '/receipt_roll_1301.xlsx'
 DETAILS_TEXT_CORPUS = DATA_DIR + '/details_corpus.txt'
 
 # words to help us find spaces
-PLACES_NOUNS_TXT = DATA_DIR + '/nouns_for_places.txt'
+PLACES_NOUNS_TXT = STOP_WORDS_DIR + '/nouns_for_places.txt'
 
 # words to omit from the 'Source' column when extracting places
-SOURCE_STOP_WORDS_TXT = DATA_DIR + '/sources_stop_words.txt'
+SOURCE_STOP_WORDS_TXT = STOP_WORDS_DIR + '/sources_stop_words.txt'
 
 # stop words used when extracting keywords
-KEYWORDS_STOP_WORDS_TXT = DATA_DIR + '/keywords_stop_words.txt'
+KEYWORDS_STOP_WORDS_TXT = STOP_WORDS_DIR + '/keywords_stop_words.txt'
