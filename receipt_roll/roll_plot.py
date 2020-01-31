@@ -23,11 +23,11 @@ def plt_total_by_terms():
     plot.yticks(ticks_range, ticks_labels)
 
     # plot the data
-    ax = sn.barplot(x=total_terms.index, y=total_terms.Pence)
+    ax = sn.barplot(x=total_terms.index, y=total_terms['Term total'])
 
     # add the £.s.d. to each bar
-    for patch, psd in zip(ax.patches, total_terms['£.s.d.']):
-        ax.text(patch.get_x() + patch.get_width() / 2, patch.get_height(), psd, ha="center",
+    for patch, pence in zip(ax.patches, total_terms['Term total']):
+        ax.text(patch.get_x() + patch.get_width() / 2, patch.get_height(), money.pence_to_psd(pence), ha="center",
                 fontsize=14, linespacing=2.0)
 
         # add labels
@@ -50,10 +50,10 @@ def plt_pc_by_terms():
     total_terms = roll_data.total_by_terms_df()
 
     # plot the data
-    ax = sn.barplot(x=total_terms.index, y=total_terms['%'])
+    ax = sn.barplot(x=total_terms.index, y=total_terms['Term % of total'])
 
     # add the £.s.d. to each bar
-    for patch, pc in zip(ax.patches, total_terms['%']):
+    for patch, pc in zip(ax.patches, total_terms['Term % of total']):
         ax.text(patch.get_x() + patch.get_width() / 2, patch.get_height(), '{0:.1f}%'.format(pc), ha="center",
                 fontsize=14, linespacing=2.0)
 

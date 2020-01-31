@@ -9,6 +9,9 @@ STOP_WORDS_DIR = DATA_DIR + '/stop_words'
 # the transcript created by Paul Dryburgh and Brendan Smith of the 1301/2 Irish Exchequer receipt roll
 ROLL_TXT = DATA_DIR + '/roll_1301.txt'
 
+# csv of 'NOTHING' dates
+NOTHING_CSV = DATA_DIR + '/nothing_dates.csv'
+
 # roll data as csv
 ROLL_CSV = DATA_DIR + '/roll_1301.csv'
 

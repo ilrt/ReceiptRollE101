@@ -115,6 +115,8 @@ def parse_roll():
         # ignore these sums
         elif 'MONTHLY SUM' in line or 'TOTAL' in line:
             pass
+        elif re.match('^NOTHING', line):
+            pass
         # ignore these sums
         elif day_regex.match(line):
             pass
@@ -144,8 +146,21 @@ def parse_roll():
     if not os.path.exists(settings.DATA_DIR):
         os.makedirs(settings.DATA_DIR)
 
-    # use pandas to write the data csv
+    # make a data frame
     df = pd.DataFrame(data, columns=data_columns)
+
+    # cast the membrane to a number
+    df[common.MEM_COL] = df[common.MEM_COL].apply(pd.to_numeric)
+
+    # get the feast days ... days recorded, but no values given
+    nothing_df = pd.read_csv(settings.NOTHING_CSV)
+
+    # merge data with feast dates
+    df = pd.merge(df, nothing_df, on=[common.MEM_COL, common.TERM_COL, common.DATE_COL, common.DAY_COL,
+                                      common.SOURCE_COL, common.DETAILS_COL, common.VAL_COL, common.PENCE_COL],
+                  how='outer', sort=True)
+
+    # write to file
     df.to_csv(settings.ROLL_CSV, index=False)
 
     # use pandas to write the daily sums csv
