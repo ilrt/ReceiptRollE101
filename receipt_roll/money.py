@@ -241,6 +241,8 @@ def pence_to_psd(pennies):
     shilling_fmt = "{}s.".format(int(shillings)) if shillings > 0 else ""
     # we need to check for quarter fractions
     fraction_fmt = decimal_to_vulgar_fraction(fraction) if fraction > 0 else ""
+    if fraction_fmt is None:
+        fraction_fmt = ""
     pennies_fmt = "{}{}d.".format(int(pennies), fraction_fmt) if pennies > 0 or fraction > 0 else ""
 
     return "{}{}{}".format(pound_fmt, shilling_fmt, pennies_fmt)
