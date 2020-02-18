@@ -59,3 +59,6 @@ def have_entities_data():
         if not os.path.isfile(settings.ROLL_WITH_ENTITIES_CSV):
             print("Missing " + settings.ROLL_WITH_ENTITIES_CSV + "; you need to generate it. See README.")
             sys.exit()
+
+
+DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']

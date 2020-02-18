@@ -6,9 +6,14 @@ import matplotlib.pyplot as plot
 import seaborn as sn
 
 
-def terms():
-    """ Basic structure for holding around terms """
+def terms_for_index():
+    """ Basic structure for holding data with terms as the index. """
     return {'Michaelmas': [], 'Hilary': [], 'Easter': [], 'Trinity': []}
+
+
+def terms_for_column():
+    """ So we can use terms as column headings. """
+    return ['Michaelmas', 'Hilary', 'Easter', 'Trinity']
 
 
 def roll_as_df():
@@ -47,33 +52,38 @@ def compare_daily_sums_df():
     return pd.read_csv(settings.DAILY_SUMS_COMPARE_CSV)
 
 
-def terms_overview_df():
-    """ A data frame that holds summary data about each of the terms. """
+def terms_overview_df(df=roll_with_entities_df()):
+    """ A data frame that holds summary data about each of the terms_for_index. """
 
-    # get the data
-    df = roll_with_entities_df()
+    # columns for this overview
+    columns = ['Total Days', 'Days with payments', 'Days with no payments', 'Term total', 'Total entries']
 
     # data structure to hold calculations
-    terms_data = terms()
+    terms_data = terms_for_index()
 
-    group_by = df.groupby(common.TERM_COL)
-    columns = ['Total Days', 'Days with payments', 'Days with no payments', 'Term total']
-
-    for name, group in group_by:
+    # group by terms
+    for name, group in df.groupby(common.TERM_COL):
         # number of days in term payments were recorded
         term_days = group[common.DATE_COL].unique().size
+
         # total amount collected for the term
         term_total = group[common.PENCE_COL].sum()
+
         # days with no payments
         days_no_payment = group[group[common.DETAILS_COL] == 'NOTHING'][common.DATE_COL].unique().size
+
         # days with payments
         days_with_payment = term_days - days_no_payment
+
+        # no of entries
+        term_entries_no = group[common.DETAILS_COL].count()
 
         # add the raw data
         terms_data[name].append(term_days)
         terms_data[name].append(days_with_payment)
         terms_data[name].append(days_no_payment)
         terms_data[name].append(term_total)
+        terms_data[name].append(term_entries_no)
 
     return pd.DataFrame.from_dict(terms_data, orient='index', columns=columns)
 
@@ -94,17 +104,54 @@ def payments_overview_df():
 
 
 def source_term_payments_matrix_df():
+    # get the data
     df = roll_with_entities_df()
-    terms_names = ['Michaelmas', 'Hilary', 'Easter', 'Trinity']
+
+    # columns
+    terms_names = terms_for_column()
+
+    # indexes (sources)
     sources_names = df[common.SOURCE_COL].unique()
 
+    # create a matrix with values set to zero
     matrix = pd.DataFrame(np.zeros(shape=(len(sources_names), len(terms_names))), columns=terms_names,
                           index=sources_names)
 
-    group_by = df.groupby(common.TERM_COL)
-    for term, term_group in group_by:
+    # group by term
+    group_by_term = df.groupby(common.TERM_COL)
+
+    # iterate over the terms
+    for term, term_group in group_by_term:
+
+        # for each term, group by source of income, and iterate over each source
         for source, source_group in term_group.groupby(common.SOURCE_COL):
+            # get the total for that source
             total = source_group[common.PENCE_COL].sum()
+            # update the matrix
             matrix.at[source, term] = total
+
+    # remove 'NOTHING' as a source
+    matrix = matrix.drop(index='NOTHING').sort_index()
+
+    # change the source name (index) to title case
+    matrix.index = matrix.index.map(str.title)
+
+    return matrix
+
+
+def days_of_week_total_by_term(df=roll_with_entities_df()):
+    # get the data
+    df = df[df[common.SOURCE_COL] != 'NOTHING']
+
+    term_names = terms_for_column()
+
+    # create a matrix with values set to zero
+    matrix = pd.DataFrame(np.zeros(shape=(len(term_names), len(common.DAYS_OF_WEEK))), columns=common.DAYS_OF_WEEK,
+                          index=term_names)
+
+    for term, term_group in df.groupby(common.TERM_COL):
+        for day, day_group in term_group.groupby(common.DAY_COL):
+            total = day_group[common.PENCE_COL].sum()
+            matrix.at[term, day] = total
 
     return matrix
