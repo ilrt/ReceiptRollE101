@@ -52,7 +52,7 @@ def compare_daily_sums_df():
     return pd.read_csv(settings.DAILY_SUMS_COMPARE_CSV)
 
 
-def terms_overview_df(df=roll_with_entities_df()):
+def terms_overview_df():
     """ A data frame that holds summary data about each of the terms_for_index. """
 
     # columns for this overview
@@ -60,6 +60,8 @@ def terms_overview_df(df=roll_with_entities_df()):
 
     # data structure to hold calculations
     terms_data = terms_for_index()
+
+    df = roll_with_entities_df()
 
     # group by terms
     for name, group in df.groupby(common.TERM_COL):
@@ -139,8 +141,10 @@ def source_term_payments_matrix_df():
     return matrix
 
 
-def days_of_week_total_by_term(df=roll_with_entities_df()):
+def days_of_week_total_by_term():
+
     # get the data
+    df = roll_with_entities_df()
     df = df[df[common.SOURCE_COL] != 'NOTHING']
 
     term_names = terms_for_column()
