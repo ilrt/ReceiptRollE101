@@ -160,6 +160,8 @@ def parse_roll():
                                       common.SOURCE_COL, common.DETAILS_COL, common.VAL_COL, common.PENCE_COL],
                   how='outer', sort=True)
 
+    df = df.sort_values(by=[common.DATE_COL, common.MEM_COL])
+
     # write to file
     df.to_csv(settings.ROLL_CSV, index=False)
 
