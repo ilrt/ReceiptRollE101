@@ -288,3 +288,50 @@ def plt_business_by_day(df=roll_data.roll_with_entities_df(), filter_nothing=Tru
 
     # display
     plot.show()
+
+
+def plt_monthly_total():
+    """ Show the monthly totals in a line plot. """
+
+    # get the data
+    df = roll_data.roll_with_entities_df()
+
+    # set the style
+    sn.set(style=SN_STYLE)
+
+    # tick range in pence (divisible by 240, which is £1)
+    ticks_range = np.arange(0, 480000, 120000)
+
+    # show the labels as £ rather than pennies
+    ticks_labels = []
+    for x in np.nditer(ticks_range.T):
+        ticks_labels.append(money.pence_to_psd(x))
+    plot.yticks(ticks_range, ticks_labels)
+
+    # create a frequency by year, month
+    df['year_month'] = df.apply(roll_data.date_to_month_year_period, axis=1)
+    df.groupby(df.year_month)[common.PENCE_COL].sum().plot()
+
+    # add labels etc.
+    set_labels_title('Months', 'Total payments', 'Total payments per month ')
+
+    plot.show()
+
+
+def plt_monthly_business_count():
+    """ Show the monthly counts of business in a line plot. """
+
+    # get the data
+    df = roll_data.roll_with_entities_df()
+
+    # set the style
+    sn.set(style=SN_STYLE)
+
+    # create a frequency by year, month
+    df['year_month'] = df.apply(roll_data.date_to_month_year_period, axis=1)
+    df.groupby(df.year_month)[common.DETAILS_COL].count().plot()
+
+    # add labels etc.
+    set_labels_title('Months', 'Count of transactions', 'Total transactions per month ')
+
+    plot.show()

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 import settings
 from receipt_roll import money, common
@@ -14,6 +16,27 @@ def terms_for_index():
 def terms_for_column():
     """ So we can use terms as column headings. """
     return ['Michaelmas', 'Hilary', 'Easter', 'Trinity']
+
+
+# ---------- Methods used in apply()
+
+def date_to_period(row, freq='D'):
+    """ 'Date' is a string. Create a Period. Default is year, month and day. """
+    date = row[common.DATE_COL]
+    period = pd.Period(date, freq=freq)
+    return period
+
+
+def date_to_month_year_period(row):
+    return date_to_period(row, 'M')
+
+
+def date_to_year_period(row):
+    return date_to_period(row, 'Y')
+
+
+def date_to_week_freq(row):
+    return date_to_period(row, 'W-MON')
 
 
 def roll_as_df():
@@ -142,7 +165,6 @@ def source_term_payments_matrix_df():
 
 
 def days_of_week_total_by_term():
-
     # get the data
     df = roll_with_entities_df()
     df = df[df[common.SOURCE_COL] != 'NOTHING']
@@ -157,5 +179,27 @@ def days_of_week_total_by_term():
         for day, day_group in term_group.groupby(common.DAY_COL):
             total = day_group[common.PENCE_COL].sum()
             matrix.at[term, day] = total
+
+    return matrix
+
+
+def monthly_totals_by_source():
+    df = roll_with_entities_df()
+    df = df[df[common.SOURCE_COL] != 'NOTHING']
+
+    df[common.YEAR_MONTH_COL] = df[common.DATE_COL].str[:-3]
+
+    dates = df[common.DATE_COL].unique()
+    period_range = pd.period_range(dates[0], dates[-1], freq='M')
+
+    sources = df[common.SOURCE_COL].unique()
+
+    matrix = pd.DataFrame(np.zeros(shape=(len(sources), len(period_range))), columns=period_range,
+                          index=sources)
+
+    for month, month_group in df.groupby(common.YEAR_MONTH_COL):
+        for source, source_group in month_group.groupby(common.SOURCE_COL):
+            source_total = source_group[common.PENCE_COL].sum()
+            matrix.at[source, month] = source_total
 
     return matrix
