@@ -162,6 +162,23 @@ def parse_roll():
 
     df = df.sort_values(by=[common.DATE_COL, common.MEM_COL])
 
+    # calculate week of the term
+    week_values = []
+    for term, term_g in df.groupby(common.TERM_COL, sort=False):
+        idx = 0
+        new_week_on_monday = False
+        week = 1
+        for index, row in term_g.iterrows():
+            day = row[common.DAY_COL]
+            if new_week_on_monday is True and day == 'Monday':
+                new_week_on_monday = False
+                week = week + 1
+            if day != 'Monday':
+                new_week_on_monday = True
+            week_values.append(week)
+
+    df.insert(4, common.WEEK_COL, week_values)
+
     # write to file
     df.to_csv(settings.ROLL_CSV, index=False)
 
