@@ -183,24 +183,6 @@ def days_of_week_total_by_term():
     return matrix
 
 
-def monthly_totals_by_source():
-    df = roll_with_entities_df()
-    df = df[df[common.SOURCE_COL] != 'NOTHING']
-
-    df['year_month'] = df.apply(date_to_month_year_period, axis=1)
-    group_by = df.groupby(df.year_month)
-
-    matrix = pd.DataFrame(np.zeros(shape=(len(sources), len(period_range))), columns=period_range,
-                          index=sources)
-
-    for month, month_group in df.groupby(common.YEAR_MONTH_COL):
-        for source, source_group in month_group.groupby(common.SOURCE_COL):
-            source_total = source_group[common.PENCE_COL].sum()
-            matrix.at[source, month] = source_total
-
-    return matrix
-
-
 def transactions_and_totals_by_month():
     """ Create a matrix that shows the total count of transactions (business recorded) and the total value of
         that business, per month, as a % of the total count of transactions and the total value of business
