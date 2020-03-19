@@ -65,3 +65,5 @@ def have_entities_data():
 
 
 DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+TERMS = ['Michaelmas', 'Hilary', 'Easter', 'Trinity']

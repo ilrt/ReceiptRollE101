@@ -3,10 +3,11 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import matplotlib as mpl
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 import seaborn as sns
 from receipt_roll import roll_data, money, common
 from pandas.plotting import register_matplotlib_converters
+from nltk import FreqDist
 
 register_matplotlib_converters()
 
@@ -35,16 +36,16 @@ def filter_out_nothing(df):
 
 def set_labels_title(x_label, y_label, title):
     """ Helper text to set x and y labels and title for a plot. """
-    plot.xlabel(x_label, fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.ylabel(y_label, fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format(title), fontsize=TITLE_FONT_SIZE, fontweight='bold')
+    plt.xlabel(x_label, fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.ylabel(y_label, fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format(title), fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
 
 def plt_total_by_terms():
     """ A basic bar graph that shows the payments by term.  """
 
     # set a plot size
-    plot.figure(figsize=PLOT_DIMENSIONS)
+    plt.figure(figsize=PLOT_DIMENSIONS)
 
     # get the totals
     terms_df = roll_data.terms_overview_df()
@@ -56,7 +57,7 @@ def plt_total_by_terms():
     ticks_labels = []
     for x in np.nditer(ticks_range.T):
         ticks_labels.append(money.pence_to_psd(x))
-    plot.yticks(ticks_range, ticks_labels)
+    plt.yticks(ticks_range, ticks_labels)
 
     # plot the data
     ax = sns.barplot(x=terms_df.index, y=terms_df['Term total'])
@@ -67,19 +68,19 @@ def plt_total_by_terms():
                 fontsize=ANNOTATION_FONT_SIZE, linespacing=2.0)
 
     # add labels
-    plot.ylabel('Total payments', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format('Total payments, per term, '), fontsize=TITLE_FONT_SIZE, fontweight='bold')
+    plt.ylabel('Total payments', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format('Total payments, per term, '), fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
     # display the bar
-    plot.show()
+    plt.show()
 
 
 def plt_pc_by_terms():
     """ A basic bar graph that shows the payments by term as a percentage.  """
 
     # set a plot size
-    plot.figure(figsize=(6, 6))
+    plt.figure(figsize=(6, 6))
 
     # get the dataset
     terms_df = roll_data.terms_overview_df()
@@ -99,20 +100,20 @@ def plt_pc_by_terms():
                 fontsize=ANNOTATION_FONT_SIZE, linespacing=2.0)
 
     # add labels
-    plot.ylabel('% of total payments', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format('% of the total payments, by term, '), fontsize=TITLE_FONT_SIZE,
-               fontweight='bold')
+    plt.ylabel('% of total payments', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format('% of the total payments, by term, '), fontsize=TITLE_FONT_SIZE,
+              fontweight='bold')
 
     # display the bar
-    plot.show()
+    plt.show()
 
 
 def plt_days_by_term():
     """ A bar plot that groups by term information about days """
 
     # set a plot size
-    plot.figure(figsize=PLOT_DIMENSIONS)
+    plt.figure(figsize=PLOT_DIMENSIONS)
 
     # get the totals
     terms_df = roll_data.terms_overview_df()
@@ -121,20 +122,20 @@ def plt_days_by_term():
     terms_df[['Total Days', 'Days with payments', 'Days with no payments']].plot(kind='bar')
 
     # add labels
-    plot.ylabel('Days', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format('Number of days per term, '), fontsize=TITLE_FONT_SIZE,
-               fontweight='bold')
+    plt.ylabel('Days', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format('Number of days per term, '), fontsize=TITLE_FONT_SIZE,
+              fontweight='bold')
 
     # display the bar
-    plot.show()
+    plt.show()
 
 
 def plt_business_by_term():
     """ A bar plot that groups by terms and shows number of items of business for that term. """
 
     # set a plot size
-    plot.figure(figsize=PLOT_DIMENSIONS)
+    plt.figure(figsize=PLOT_DIMENSIONS)
 
     # get the totals
     terms_df = roll_data.terms_overview_df()
@@ -147,18 +148,18 @@ def plt_business_by_term():
                 fontsize=ANNOTATION_FONT_SIZE, linespacing=2.0)
 
     # add labels
-    plot.ylabel('No. of items of business', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format('Total number of items of business, per term, '),
-               fontsize=TITLE_FONT_SIZE, fontweight='bold')
+    plt.ylabel('No. of items of business', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format('Total number of items of business, per term, '),
+              fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
     # display the bar
-    plot.show()
+    plt.show()
 
 
 def plt_scatter_payments_year():
     # set a plot size
-    plot.figure(figsize=(10, 5))
+    plt.figure(figsize=(10, 5))
 
     # get the data and remove rows with no payments
     df = roll_data.roll_with_entities_df()
@@ -166,7 +167,7 @@ def plt_scatter_payments_year():
     df_plot = df[df[common.PENCE_COL] > 0]
 
     # create the plot
-    plot.scatter(df_plot['Date Time'].tolist(), df_plot['Pence'], s=2)
+    plt.scatter(df_plot['Date Time'].tolist(), df_plot['Pence'], s=2)
 
     # tick range in pence (divisible by 240, which is £1)
     ticks_range = np.arange(0, 84000, 6000)
@@ -175,23 +176,23 @@ def plt_scatter_payments_year():
     ticks_labels = []
     for x in np.nditer(ticks_range.T):
         ticks_labels.append(money.pence_to_psd(x))
-    plot.yticks(ticks_range, ticks_labels)
+    plt.yticks(ticks_range, ticks_labels)
 
-    plot.xticks(fontsize=ANNOTATION_FONT_SIZE, rotation=90)
+    plt.xticks(fontsize=ANNOTATION_FONT_SIZE, rotation=90)
 
     # add labels
-    plot.ylabel('Payment', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.xlabel('Date', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format('Scatter plot of all payments'), fontsize=TITLE_FONT_SIZE, fontweight='bold')
+    plt.ylabel('Payment', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.xlabel('Date', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format('Scatter plot of all payments'), fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
-    plot.show()
+    plt.show()
 
 
 def plt_all_payments():
     # set the style
     sns.set(style="darkgrid")
 
-    plot.figure(figsize=PLOT_DIMENSIONS)
+    plt.figure(figsize=PLOT_DIMENSIONS)
     df = roll_data.payments_overview_df()
     sns.barplot(data=df, x=common.SOURCE_COL, y=common.PENCE_COL)
 
@@ -202,13 +203,13 @@ def plt_all_payments():
     ticks_labels = []
     for x in np.nditer(ticks_range.T):
         ticks_labels.append(money.pence_to_psd(x))
-    plot.yticks(ticks_range, ticks_labels)
+    plt.yticks(ticks_range, ticks_labels)
 
-    plot.xticks(fontsize=ANNOTATION_FONT_SIZE, rotation=90)
-    plot.ylabel('Total', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.xlabel('Source', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format('Total payments by source'), fontsize=TITLE_FONT_SIZE, fontweight='bold')
-    plot.show()
+    plt.xticks(fontsize=ANNOTATION_FONT_SIZE, rotation=90)
+    plt.ylabel('Total', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.xlabel('Source', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format('Total payments by source'), fontsize=TITLE_FONT_SIZE, fontweight='bold')
+    plt.show()
 
 
 def plt_source_term_heat_map():
@@ -218,23 +219,23 @@ def plt_source_term_heat_map():
 
     df_psd = df.applymap(money.pence_to_psd)
 
-    plot.figure(figsize=(10, 10))
+    plt.figure(figsize=(10, 10))
     with sns.axes_style('white'):
         hm = sns.heatmap(df, annot=df_psd, cmap='Oranges', cbar=False, fmt='', annot_kws={'size': ANNOTATION_FONT_SIZE})
         hm.set_yticklabels(hm.get_yticklabels(), rotation=0)
 
-    plot.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.ylabel('Source', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format('Payments per term by source'), fontsize=TITLE_FONT_SIZE, fontweight='bold')
+    plt.xlabel('Terms', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.ylabel('Source', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format('Payments per term by source'), fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
-    plot.show()
+    plt.show()
 
 
 def plt_days_term_swarm(log=True):
     df = roll_data.roll_with_entities_df()
 
     # set a plot size
-    plot.figure(figsize=PLOT_DIMENSIONS)
+    plt.figure(figsize=PLOT_DIMENSIONS)
 
     ax = sns.stripplot(x=common.DAY_COL, y=common.PENCE_COL, hue=common.TERM_COL, data=df, jitter=0.3,
                        order=common.DAYS_OF_WEEK)
@@ -242,13 +243,13 @@ def plt_days_term_swarm(log=True):
         ax.set_ylim(bottom=1)
         ax.set_yscale('log')
 
-    plot.xlabel('Day of the week', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.ylabel('Payment', fontsize=LABEL_FONT_SIZE, fontweight='bold')
-    plot.title(BASIC_PLOT_TITLE.format('Payments per day'), fontsize=TITLE_FONT_SIZE, fontweight='bold')
+    plt.xlabel('Day of the week', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.ylabel('Payment', fontsize=LABEL_FONT_SIZE, fontweight='bold')
+    plt.title(BASIC_PLOT_TITLE.format('Payments per day'), fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
-    plot.legend(loc='lower right', shadow=True, fontsize='small')
+    plt.legend(loc='lower right', shadow=True, fontsize='small')
 
-    plot.show()
+    plt.show()
 
 
 def plt_business_by_day_term(df=roll_data.roll_with_entities_df(), filter_nothing=True):
@@ -268,10 +269,10 @@ def plt_business_by_day_term(df=roll_data.roll_with_entities_df(), filter_nothin
     set_labels_title('Days of the week', 'No. of items of business', 'Total no. of items occurring on a day, by term, ')
 
     # add a legend
-    plot.legend(loc='upper center', shadow=True, fontsize='small')
+    plt.legend(loc='upper center', shadow=True, fontsize='small')
 
     # display
-    plot.show()
+    plt.show()
 
 
 def plt_business_by_day(df=roll_data.roll_with_entities_df(), filter_nothing=True):
@@ -292,7 +293,7 @@ def plt_business_by_day(df=roll_data.roll_with_entities_df(), filter_nothing=Tru
                      'Total no. of items of business occurring on each day ')
 
     # display
-    plot.show()
+    plt.show()
 
 
 def plt_monthly_total():
@@ -311,7 +312,7 @@ def plt_monthly_total():
     ticks_labels = []
     for x in np.nditer(ticks_range.T):
         ticks_labels.append(money.pence_to_psd(x))
-    plot.yticks(ticks_range, ticks_labels)
+    plt.yticks(ticks_range, ticks_labels)
 
     # create a frequency by year, month
     df['year_month'] = df.apply(roll_data.date_to_month_year_period, axis=1)
@@ -321,7 +322,7 @@ def plt_monthly_total():
     # add labels etc.
     set_labels_title('Months', 'Total payments', 'Total payments per month ')
 
-    plot.show()
+    plt.show()
 
 
 def plt_monthly_business_count():
@@ -341,7 +342,7 @@ def plt_monthly_business_count():
     # add labels etc.
     set_labels_title('Months', 'Count of transactions', 'Total transactions per month ')
 
-    plot.show()
+    plt.show()
 
 
 def plt_transactions_and_totals_by_month():
@@ -362,7 +363,7 @@ def plt_transactions_and_totals_by_month():
     set_labels_title('Months', '% of total', 'No. of transactions and their total value, \nper month, as a % of the '
                                              'total for the year')
 
-    plot.show()
+    plt.show()
 
 
 def plt_total_receipts_by_week_and_term():
@@ -383,7 +384,7 @@ def plt_total_receipts_by_week_and_term():
     ticks_labels = []
     for x in np.nditer(ticks_range.T):
         ticks_labels.append(money.pence_to_psd(x))
-    plot.yticks(ticks_range, ticks_labels)
+    plt.yticks(ticks_range, ticks_labels)
 
     for term, term_group in df.groupby(common.TERM_COL, sort=False):
         values = term_group.groupby(common.WEEK_COL)[common.PENCE_COL].sum()
@@ -392,7 +393,7 @@ def plt_total_receipts_by_week_and_term():
     # add labels etc.
     set_labels_title('Week', 'Total value of receipts', 'Total value of receipts for each week of the term')
 
-    plot.show()
+    plt.show()
 
 
 def plt_transaction_count_by_week_and_term():
@@ -413,7 +414,7 @@ def plt_transaction_count_by_week_and_term():
     # add labels etc.
     set_labels_title('Week', 'No. of transactions', 'No. of transactions for each week of the term')
 
-    plot.show()
+    plt.show()
 
 
 def plt_total_receipts_by_week_and_term_as_pc_of_year_total():
@@ -438,7 +439,7 @@ def plt_total_receipts_by_week_and_term_as_pc_of_year_total():
     set_labels_title('Week', 'Value of receipts as % of year total',
                      'Total value of weekly receipts as a % of the yearly total')
 
-    plot.show()
+    plt.show()
 
 
 def plt_transactions_count_by_week_and_term_as_pc_of_year_total():
@@ -463,7 +464,7 @@ def plt_transactions_count_by_week_and_term_as_pc_of_year_total():
     set_labels_title('Week', 'Value of receipts as % of year total',
                      'Number of weekly transactions as a % of the yearly total')
 
-    plot.show()
+    plt.show()
 
 
 def plt_total_receipts_by_week_and_term_as_pc_of_term_total():
@@ -487,7 +488,7 @@ def plt_total_receipts_by_week_and_term_as_pc_of_term_total():
     set_labels_title('Week', 'Value of receipts as % of term total',
                      'Total value of weekly receipts as a % of the term total')
 
-    plot.show()
+    plt.show()
 
 
 def plt_transactions_count_by_week_and_term_as_pc_of_term_total():
@@ -511,7 +512,7 @@ def plt_transactions_count_by_week_and_term_as_pc_of_term_total():
     set_labels_title('Week', 'Value of receipts as % of term total',
                      'Number of weekly transactions as a % of the term total')
 
-    plot.show()
+    plt.show()
 
 
 def plt_test():
@@ -536,7 +537,7 @@ def plt_test():
         set_labels_title('Week', '% of term total',
                          '{}\n Number of weekly transactions and total receipts as a % of the term total'.format(term))
 
-        plot.show()
+        plt.show()
 
 
 def calendar_empty_matrix():
@@ -563,15 +564,15 @@ def calender_heat_map(data, cmap, norm, title):
     """ Basic rendering of the heatmap to make it look like a calendar. """
     sns.set()
 
-    plot.figure(figsize=(8, 6))
+    plt.figure(figsize=(8, 6))
 
     sns.heatmap(data, cmap=cmap, norm=norm, cbar=False)
 
-    plot.ylabel('Months')
-    plot.xlabel('Days')
+    plt.ylabel('Months')
+    plt.xlabel('Days')
 
-    plot.yticks(rotation=0)
-    plot.xticks(rotation=0)
+    plt.yticks(rotation=0)
+    plt.xticks(rotation=0)
 
 
 def plt_terms_calendar():
@@ -604,12 +605,12 @@ def plt_terms_calendar():
                       'Terms in the 1301/2 financial year\n derived from (The National Archives, London, E 101/233/16')
 
     # add the days of the terms to the plot
-    plot.text(13, 2, 'Michaelmas')
-    plot.text(13, 6, 'Hilary')
-    plot.text(13, 8.6, 'Easter')
-    plot.text(13, 10.6, 'Trinity')
+    plt.text(13, 2, 'Michaelmas')
+    plt.text(13, 6, 'Hilary')
+    plt.text(13, 8.6, 'Easter')
+    plt.text(13, 10.6, 'Trinity')
 
-    plot.show()
+    plt.show()
 
 
 def plt_terms_calendar_payments():
@@ -651,4 +652,35 @@ def plt_terms_calendar_payments():
                       'Terms and days with payments in the 1301/2 financial year\n derived from '
                       '(The National Archives, London, E 101/233/16')
 
-    plot.show()
+    plt.show()
+
+
+def plt_keyword_frequency():
+
+    # get data
+    df = roll_data.roll_with_entities_df()
+
+    # filter out rows without keywords
+    df_keywords = df[df[common.KEYWORDS_COL].notnull()]
+
+    # get keywords as a list
+    all_keywords = df_keywords[common.KEYWORDS_COL].to_list()
+
+    # remove the semicolon delimiter
+    kw = []
+    for k in all_keywords:
+        for i in k.split(';'):
+            kw.append(i)
+
+    kw_freq = FreqDist(kw)
+
+    # create a pandas as df
+    kw_df = pd.DataFrame(kw_freq.most_common(20), columns=['Word', 'Frequency']).set_index('Word')
+
+    sns.set()
+
+    kw_df.plot(kind='bar', legend=None)
+
+    set_labels_title('Keyword', 'Frequency', '25 most frequent keywords')
+
+    plt.show()

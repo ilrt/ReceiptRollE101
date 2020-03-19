@@ -117,7 +117,7 @@ def apply_extract_places(row):
     toponyms = extract_place_from_toponym(row[common.PEOPLE_COL])
 
     # return the values as a string delimited by a semicolon
-    return '; '.join(places + toponyms)
+    return ';'.join(places + toponyms)
 
 
 def clean_details(details):
@@ -209,7 +209,7 @@ def extract_people(text):
     if len(people) > 0:
         if 'others' in people:
             people.remove('others')
-        return "; ".join(people)
+        return ";".join(people)
     else:
         return None
 
@@ -269,7 +269,7 @@ def extract_keywords(row):
     # remove stop words
     keywords = [keyword for keyword in keywords if keyword not in KEYWORD_STOP_WORDS]
 
-    return '; '.join(keywords)
+    return ';'.join(keywords)
 
 
 def extract_place_from_toponym(people):
