@@ -119,7 +119,7 @@ def plt_days_by_term():
     terms_df = roll_data.terms_overview_df()
 
     # plot the data
-    terms_df[['Total Days', 'Days with payments', 'Days with no payments']].plot(kind='bar')
+    terms_df[['Total Days', 'Days with payments', 'Days with no payments']].plot(kind='bar', colormap='tab20b')
 
     # add labels
     plt.ylabel('Days', fontsize=LABEL_FONT_SIZE, fontweight='bold')
