@@ -183,28 +183,3 @@ def days_of_week_total_by_term():
     return matrix
 
 
-def transactions_and_totals_by_month():
-    """ Create a matrix that shows the total count of transactions (business recorded) and the total value of
-        that business, per month, as a % of the total count of transactions and the total value of business
-        for the whole financial year. """
-
-    df = roll_with_entities_df()
-    df = df[df[common.SOURCE_COL] != 'NOTHING']
-    df['year_month'] = df.apply(date_to_month_year_period, axis=1)
-
-    trans_pc = 'No. of transactions as % of total'
-    total_pc = 'Total value of transactions as % of total'
-
-    columns = [trans_pc, total_pc]
-    index = df['year_month'].unique()
-
-    pence_count = df[common.PENCE_COL].count()
-    pence_sum = df[common.PENCE_COL].sum()
-
-    matrix = pd.DataFrame(np.zeros(shape=(len(index), len(columns))), columns=columns, index=index)
-
-    for month, month_group in df.groupby(df.year_month):
-        matrix.at[month, trans_pc] = month_group[common.PENCE_COL].count() / pence_count * 100
-        matrix.at[month, total_pc] = month_group[common.PENCE_COL].sum() / pence_sum * 100
-
-    return matrix

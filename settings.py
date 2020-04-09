@@ -3,6 +3,9 @@ import os
 # location of the data files
 DATA_DIR = os.path.dirname(os.path.abspath(__file__)) + '/data'
 
+# plot image location
+PLOT_IMG_DIR = os.path.dirname(os.path.abspath(__file__)) + '/plots'
+
 # location of the stop words
 STOP_WORDS_DIR = DATA_DIR + '/stop_words'
 

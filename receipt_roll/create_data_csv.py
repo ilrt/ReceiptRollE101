@@ -59,8 +59,8 @@ def date_values(line_val):
 
 def parse_roll():
     # heading for the main dataset
-    data_columns = [common.MEM_COL, common.TERM_COL, common.DATE_COL, common.DAY_COL, common.SOURCE_COL,
-                    common.DETAILS_COL, common.VAL_COL, common.PENCE_COL]
+    data_columns = [common.MEM_COL, common.TERM_COL, common.DATE_COL, common.DAY_ENTRY, common.DAY_COL,
+                    common.SOURCE_COL, common.DETAILS_COL, common.VAL_COL, common.PENCE_COL]
 
     # headings for the daily sums
     daily_sums_columns = [common.DATE_COL, common.VAL_COL, common.PENCE_COL]
@@ -90,6 +90,7 @@ def parse_roll():
         elif date_regex.match(line):
             date__ = date_values(line)
             day_of_week = date__[0]
+            day_entry = 1
             date = date__[1]
         # or are we declaring the financial term?
         elif 'Gross receipt' in line:
@@ -140,7 +141,8 @@ def parse_roll():
                     pennies = data[-1][-1]
                     val = data[-1][-2]
                 # add the row to the data array
-                data.append([number, term, date, day_of_week, place, line.strip(), val, pennies])
+                data.append([number, term, date, day_entry, day_of_week, place, line.strip(), val, pennies])
+                day_entry += 1
 
     # create the data directory if necessary
     if not os.path.exists(settings.DATA_DIR):
@@ -156,8 +158,9 @@ def parse_roll():
     nothing_df = pd.read_csv(settings.NOTHING_CSV)
 
     # merge data with feast dates
-    df = pd.merge(df, nothing_df, on=[common.MEM_COL, common.TERM_COL, common.DATE_COL, common.DAY_COL,
-                                      common.SOURCE_COL, common.DETAILS_COL, common.VAL_COL, common.PENCE_COL],
+    df = pd.merge(df, nothing_df, on=[common.MEM_COL, common.TERM_COL, common.DATE_COL, common.DAY_ENTRY,
+                                      common.DAY_COL, common.SOURCE_COL, common.DETAILS_COL, common.VAL_COL,
+                                      common.PENCE_COL],
                   how='outer', sort=True)
 
     df = df.sort_values(by=[common.DATE_COL, common.MEM_COL])

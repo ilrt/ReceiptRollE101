@@ -296,176 +296,6 @@ def plt_business_by_day(df=roll_data.roll_with_entities_df(), filter_nothing=Tru
     plt.show()
 
 
-def plt_monthly_total():
-    """ Show the monthly totals in a line plot. """
-
-    # get the data
-    df = roll_data.roll_with_entities_df()
-
-    # set the style
-    sns.set(style=SN_STYLE)
-
-    # tick range in pence (divisible by 240, which is £1)
-    ticks_range = np.arange(0, 480000, 120000)
-
-    # show the labels as £ rather than pennies
-    ticks_labels = []
-    for x in np.nditer(ticks_range.T):
-        ticks_labels.append(money.pence_to_psd(x))
-    plt.yticks(ticks_range, ticks_labels)
-
-    # create a frequency by year, month
-    df['year_month'] = df.apply(roll_data.date_to_month_year_period, axis=1)
-    ax = df.groupby(df.year_month)[common.PENCE_COL].sum().plot(marker='o')
-    ax.autoscale(True)
-
-    # add labels etc.
-    set_labels_title('Months', 'Total payments', 'Total payments per month ')
-
-    plt.show()
-
-
-def plt_monthly_business_count():
-    """ Show the monthly counts of business in a line plot. """
-
-    # get the data
-    df = roll_data.roll_with_entities_df()
-
-    # set the style
-    sns.set(style=SN_STYLE)
-
-    # create a frequency by year, month
-    df['year_month'] = df.apply(roll_data.date_to_month_year_period, axis=1)
-    ax = df.groupby(df.year_month)[common.DETAILS_COL].count().plot(marker='o')
-    ax.autoscale(True)
-
-    # add labels etc.
-    set_labels_title('Months', 'Count of transactions', 'Total transactions per month ')
-
-    plt.show()
-
-
-def plt_transactions_and_totals_by_month():
-    """ Plot the total count of transactions (business recorded) and the total value of that business, per month,
-        as a % of the total count of transactions and the total value of business for the whole financial year. """
-
-    # set the style
-    sns.set(style=SN_STYLE)
-
-    # get the data
-    df = roll_data.transactions_and_totals_by_month()
-
-    # plot
-    ax = df.plot(marker='o')
-    ax.autoscale(True)
-
-    # add labels etc.
-    set_labels_title('Months', '% of total', 'No. of transactions and their total value, \nper month, as a % of the '
-                                             'total for the year')
-
-    plt.show()
-
-
-def plt_total_receipts_by_week_and_term():
-    """ Create a line plot for the total value of the receipts received in each week of a term. Each term
-        is plotted on its own line. """
-
-    # set the style
-    sns.set(style=SN_STYLE)
-
-    # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
-    df = filter_out_nothing(df)
-
-    # tick range in pence (divisible by 240, which is £1)
-    ticks_range = np.arange(0, 240000, 24000)
-
-    # show the labels as £ rather than pennies
-    ticks_labels = []
-    for x in np.nditer(ticks_range.T):
-        ticks_labels.append(money.pence_to_psd(x))
-    plt.yticks(ticks_range, ticks_labels)
-
-    for term, term_group in df.groupby(common.TERM_COL, sort=False):
-        values = term_group.groupby(common.WEEK_COL)[common.PENCE_COL].sum()
-        sns.lineplot(y=values, x=values.index, label=term, marker='o')
-
-    # add labels etc.
-    set_labels_title('Week', 'Total value of receipts', 'Total value of receipts for each week of the term')
-
-    plt.show()
-
-
-def plt_transaction_count_by_week_and_term():
-    """ Create a line plot for number of transactions occuring each week of a term. Each term
-        is plotted on its own line. """
-
-    # set the style
-    sns.set(style=SN_STYLE)
-
-    # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
-    df = df[df[common.SOURCE_COL] != 'NOTHING']
-
-    for term, term_group in df.groupby(common.TERM_COL, sort=False):
-        values = term_group.groupby(common.WEEK_COL)[common.PENCE_COL].count()
-        sns.lineplot(y=values, x=values.index, label=term, marker='o')
-
-    # add labels etc.
-    set_labels_title('Week', 'No. of transactions', 'No. of transactions for each week of the term')
-
-    plt.show()
-
-
-def plt_total_receipts_by_week_and_term_as_pc_of_year_total():
-    """ Create a line plot for the total value of the receipts received in each week of a term as a percentage
-        of the total receipts over the year. Each term is plotted on its own line. """
-
-    # set the style
-    sns.set(style=SN_STYLE)
-
-    # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
-    df = filter_out_nothing(df)
-
-    # total for the year
-    total = df[common.PENCE_COL].sum()
-
-    for term, term_group in df.groupby(common.TERM_COL, sort=False):
-        values = term_group.groupby(common.WEEK_COL)[common.PENCE_COL].sum() / total * 100
-        sns.lineplot(y=values, x=values.index, label=term, marker='o')
-
-    # add labels etc.
-    set_labels_title('Week', 'Value of receipts as % of year total',
-                     'Total value of weekly receipts as a % of the yearly total')
-
-    plt.show()
-
-
-def plt_transactions_count_by_week_and_term_as_pc_of_year_total():
-    """ Create a line plot for the total number of transactions as a percentage of the total number of transactions
-        over the year. Each term is plotted on its own line. """
-
-    # set the style
-    sns.set(style=SN_STYLE)
-
-    # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
-    df = filter_out_nothing(df)
-
-    # total for the year
-    total = df[common.PENCE_COL].count()
-
-    for term, term_group in df.groupby(common.TERM_COL, sort=False):
-        values = term_group.groupby(common.WEEK_COL)[common.PENCE_COL].count() / total * 100
-        sns.lineplot(y=values, x=values.index, label=term, marker='o')
-
-    # add labels etc.
-    set_labels_title('Week', 'Value of receipts as % of year total',
-                     'Number of weekly transactions as a % of the yearly total')
-
-    plt.show()
-
 
 def plt_total_receipts_by_week_and_term_as_pc_of_term_total():
     """ Create a line plot for the total value of the receipts received in each week of a term as a percentage
@@ -515,29 +345,7 @@ def plt_transactions_count_by_week_and_term_as_pc_of_term_total():
     plt.show()
 
 
-def plt_test():
-    # set the style
-    sns.set(style=SN_STYLE)
 
-    # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
-    df = filter_out_nothing(df)
-
-    for term, term_group in df.groupby(common.TERM_COL, sort=False):
-        # total for the term
-        total_count = term_group[common.PENCE_COL].count()
-        total_sum = term_group[common.PENCE_COL].sum()
-        values_count = term_group.groupby(common.WEEK_COL)[common.PENCE_COL].count() / total_count * 100
-        sns.lineplot(y=values_count, x=values_count.index, label='Transaction count as %',
-                     marker='o')
-        values_sum = term_group.groupby(common.WEEK_COL)[common.PENCE_COL].sum() / total_sum * 100
-        sns.lineplot(y=values_sum, x=values_sum.index, label='Total receipts as %', marker='o')
-
-        # add labels etc.
-        set_labels_title('Week', '% of term total',
-                         '{}\n Number of weekly transactions and total receipts as a % of the term total'.format(term))
-
-        plt.show()
 
 
 def calendar_empty_matrix():
@@ -614,7 +422,6 @@ def plt_terms_calendar():
 
 
 def plt_terms_calendar_payments():
-
     # get the data
     data = roll_data.roll_with_entities_df()
 
@@ -651,36 +458,5 @@ def plt_terms_calendar_payments():
     calender_heat_map(cal, cmap, norm,
                       'Terms and days with payments in the 1301/2 financial year\n derived from '
                       '(The National Archives, London, E 101/233/16')
-
-    plt.show()
-
-
-def plt_keyword_frequency():
-
-    # get data
-    df = roll_data.roll_with_entities_df()
-
-    # filter out rows without keywords
-    df_keywords = df[df[common.KEYWORDS_COL].notnull()]
-
-    # get keywords as a list
-    all_keywords = df_keywords[common.KEYWORDS_COL].to_list()
-
-    # remove the semicolon delimiter
-    kw = []
-    for k in all_keywords:
-        for i in k.split(';'):
-            kw.append(i)
-
-    kw_freq = FreqDist(kw)
-
-    # create a pandas as df
-    kw_df = pd.DataFrame(kw_freq.most_common(20), columns=['Word', 'Frequency']).set_index('Word')
-
-    sns.set()
-
-    kw_df.plot(kind='bar', legend=None)
-
-    set_labels_title('Keyword', 'Frequency', '25 most frequent keywords')
 
     plt.show()
