@@ -116,6 +116,9 @@ def terms_overview_df():
 def payments_overview_df():
     df = roll_with_entities_df()
 
+    # shorten the label
+    df = df.replace(['ENGLISH DEBTS BY THE MERCHANTS OF LUCCA'], 'MERCHANTS OF LUCCA')
+
     data = []
 
     group_by = df.groupby(common.SOURCE_COL)
@@ -131,6 +134,9 @@ def payments_overview_df():
 def source_term_payments_matrix_df():
     # get the data
     df = roll_with_entities_df()
+
+    # shorten the label
+    df = df.replace(['ENGLISH DEBTS BY THE MERCHANTS OF LUCCA'], 'MERCHANTS OF LUCCA')
 
     # columns
     terms_names = terms_for_column()
