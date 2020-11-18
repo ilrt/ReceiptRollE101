@@ -3,7 +3,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from nltk import FreqDist
 
-from receipt_roll import roll_data, common
+from receipt_roll import common
+from receipt_roll.data import roll
 from receipt_roll.plots.base import save_or_show, set_labels, title_text, SN_STYLE, FONT_NAME, PLOT_DIMENSIONS
 
 
@@ -19,7 +20,7 @@ def plt_keyword_frequency(title='{} most frequent keywords', x_label='Keyword', 
     title = title.format(limit)
 
     # get data
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
 
     # filter out rows without keywords
     df_keywords = df[df[common.KEYWORDS_COL].notnull()]

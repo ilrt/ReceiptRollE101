@@ -1,4 +1,5 @@
-from receipt_roll import roll_data, common
+from receipt_roll import common
+from receipt_roll.data import roll
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
@@ -9,8 +10,8 @@ from receipt_roll.plots.base import set_labels_title, save_or_show
 
 
 def df_sheriffs():
-    df = roll_data.roll_with_entities_df()
-    df['month_year'] = df.apply(roll_data.date_to_month_year_period, axis=1)
+    df = roll.roll_with_entities_df()
+    df['month_year'] = df.apply(roll.date_to_month_year_period, axis=1)
     sheriffs_df = df[df[common.PEOPLE_COL].notnull() & df[common.PEOPLE_COL].str.contains('sheriff')]
     # error in data, remove Dublin Manor
     return sheriffs_df[sheriffs_df[common.SOURCE_COL] != 'DUBLIN MANOR']

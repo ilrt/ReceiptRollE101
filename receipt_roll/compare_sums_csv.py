@@ -5,7 +5,8 @@
 """
 
 import settings
-from receipt_roll import roll_data, common
+from receipt_roll import common
+from receipt_roll.data import roll
 import pandas as pd
 
 
@@ -18,13 +19,13 @@ def generate_report():
     """ Create a comparison report. """
 
     # get the roll data
-    df_roll = roll_data.roll_as_df()
+    df_roll = roll.roll_as_df()
 
     # get the daily sums from the roll
-    df_sums = roll_data.daily_sums_df()
+    df_sums = roll.daily_sums_df()
 
     # compute daily sums ourselves
-    df_sums_comp = roll_data.daily_sum_from_roll_df(df_roll)
+    df_sums_comp = roll.daily_sum_from_roll_df(df_roll)
 
     # just get the date, pence and merge into a new data frame
     df_sums_left = df_sums[[common.DATE_COL, common.PENCE_COL]]

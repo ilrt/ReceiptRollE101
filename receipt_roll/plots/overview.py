@@ -8,7 +8,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from receipt_roll import roll_data, money, common
+from receipt_roll import money, common
+from receipt_roll.data import roll
 from receipt_roll.plots.base import PLOT_DIMENSIONS, save_or_show, title_text, FONT_NAME, set_labels, \
     ANNOTATION_FONT_SIZE, to_date, filter_out_nothing, SN_STYLE
 
@@ -21,7 +22,7 @@ def plt_total_by_terms(save=True, title='Total payments, per term', x_label="Ter
     plt.figure(figsize=fig_size)
 
     # get the totals
-    terms_df = roll_data.terms_overview_df()
+    terms_df = roll.terms_overview_df()
 
     # tick range in pence (divisible by 240, which is £1)
     ticks_range = np.arange(0, 600000, 120000)
@@ -61,7 +62,7 @@ def plt_pc_by_terms(save=True, title='% of the total payments, by term', x_label
     plt.figure(figsize=fig_size)
 
     # get the dataset
-    terms_df = roll_data.terms_overview_df()
+    terms_df = roll.terms_overview_df()
 
     # calculate the total income
     total = terms_df['Term total'].sum()
@@ -96,7 +97,7 @@ def plt_days_by_term(save=True, title='Number of days, per term', x_label="Terms
     plt.figure(figsize=fig_size)
 
     # get the totals
-    terms_df = roll_data.terms_overview_df()
+    terms_df = roll.terms_overview_df()
 
     # plot the data
     terms_df[['Total Days', 'Days with payments', 'Days with no payments']].plot(kind='bar', colormap='tab20b')
@@ -123,7 +124,7 @@ def plt_business_by_term(save=True, title='Total number of items of business, pe
     plt.figure(figsize=fig_size)
 
     # get the totals
-    terms_df = roll_data.terms_overview_df()
+    terms_df = roll.terms_overview_df()
 
     # plot the data
     ax = sns.barplot(x=terms_df.index, y=terms_df['Total entries'])
@@ -154,7 +155,7 @@ def plt_scatter_payments_year(save=True, title='Scatter plot of all payments', x
     plt.figure(figsize=fig_size)
 
     # get the data and remove rows with no payments
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     df['Date Time'] = df.apply(to_date, axis=1)
     df_plot = df[df[common.PENCE_COL] > 0]
 
@@ -191,7 +192,7 @@ def plt_total_payments_by_source(save=True, title='Total payments by source',
     sns.set(style="darkgrid")
 
     plt.figure(figsize=fig_size)
-    df = roll_data.payments_overview_df()
+    df = roll.payments_overview_df()
 
     sns.barplot(data=df, x=common.SOURCE_COL, y=common.PENCE_COL)
 
@@ -221,7 +222,7 @@ def plt_source_term_heat_map(save=True, title='Payments per term by source',
                              file='total_payments_source_heatmap.png', fig_size=(10, 10)):
     """ General heat map plot that shows the source of payments and the total values. """
 
-    df = roll_data.source_term_payments_matrix_df()
+    df = roll.source_term_payments_matrix_df()
 
     df_psd = df.applymap(money.pence_to_psd)
 
@@ -245,7 +246,7 @@ def plt_payments_days_swarm(save=True, title='Payments per day', x_label="Day of
                             is_long_title=False, file='payments_day_swarm.png', fig_size=PLOT_DIMENSIONS, log=True):
     """ Swarm plot showing the distribution of payments for each day. Each term has a different color."""
 
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
 
     # set a plot size
     plt.figure(figsize=fig_size)
@@ -274,7 +275,7 @@ def plt_business_by_day_term(save=True, title='Total no. of items occurring on a
                              filter_nothing=True):
     """ A plot that shows the total number of business entered on a day and term. """
 
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
 
     # filter out the rows that have no receipts
     if filter_nothing:
@@ -306,7 +307,7 @@ def plt_business_by_day(save=True, title='Total no. of items of business occurri
                         file='business_by_day.png', fig_size=PLOT_DIMENSIONS, filter_nothing=True):
     """ A plot that shows the total number of business entered on a day. """
 
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
 
     # filter out the rows that have no receipts
     if filter_nothing:
@@ -341,7 +342,7 @@ def plt_receipts_week_term_as_pc_term_total(save=True, title='Total value of wee
     sns.set(style=SN_STYLE, font=FONT_NAME)
 
     # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     df = filter_out_nothing(df)
 
     plt.figure(figsize=fig_size)
@@ -373,7 +374,7 @@ def plt_trans_count_week_term_pc_term_total(save=True, title='Number of weekly t
     sns.set(style=SN_STYLE, font=FONT_NAME)
 
     # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     df = filter_out_nothing(df)
 
     plt.figure(figsize=fig_size)

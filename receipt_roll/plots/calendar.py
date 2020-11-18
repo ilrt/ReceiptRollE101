@@ -4,7 +4,8 @@ import seaborn as sns
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from receipt_roll import roll_data, common
+from receipt_roll import common
+from receipt_roll.data import roll
 from receipt_roll.plots.base import months_labels_cal, SN_STYLE, FONT_NAME
 
 
@@ -50,10 +51,10 @@ def plt_terms_calendar():
     cal = calendar_empty_matrix()
 
     # get the data
-    data = roll_data.roll_with_entities_df()
+    data = roll.roll_with_entities_df()
 
     # make a pandas column of pandas Period types from the date
-    data['date_period'] = data.apply(roll_data.date_to_period, axis=1)
+    data['date_period'] = data.apply(roll.date_to_period, axis=1)
 
     # populate the cal data frame with '2' for term term dates
     for term, term_period in data.groupby(common.TERM_COL, sort=False):
@@ -86,10 +87,10 @@ def plt_terms_calendar_payments():
         days payments were received. """
 
     # get the data
-    data = roll_data.roll_with_entities_df()
+    data = roll.roll_with_entities_df()
 
     # make a pandas column of pandas Period types from the date
-    data['date_period'] = data.apply(roll_data.date_to_period, axis=1)
+    data['date_period'] = data.apply(roll.date_to_period, axis=1)
 
     # create an empty data frame, that represents days (columns) and months (rows)
     cal = calendar_empty_matrix()

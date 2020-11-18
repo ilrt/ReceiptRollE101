@@ -6,7 +6,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from receipt_roll import roll_data, common, money
+from receipt_roll import common, money
+from receipt_roll.data import roll
 from receipt_roll.plots.base import save_or_show, set_labels_title, SN_STYLE
 from receipt_roll.plots.radar import plot_radar
 
@@ -17,7 +18,7 @@ def plt_monthly_total(save=False, file_name='plt_monthly_total.png', file_format
     """ Show the monthly totals in a line plot. """
 
     # get the data
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
 
     # set the style
     sns.set(style=SN_STYLE)
@@ -32,7 +33,7 @@ def plt_monthly_total(save=False, file_name='plt_monthly_total.png', file_format
     plt.yticks(ticks_range, ticks_labels)
 
     # create a frequency by year, month
-    df['year_month'] = df.apply(roll_data.date_to_month_year_period, axis=1)
+    df['year_month'] = df.apply(roll.date_to_month_year_period, axis=1)
     ax = df.groupby(df.year_month)[common.PENCE_COL].sum().plot(marker='o')
     ax.autoscale(True)
 
@@ -46,13 +47,13 @@ def plt_monthly_business_count(save=False, file_name='plt_monthly_business.png',
     """ Show the monthly counts of business in a line plot. """
 
     # get the data
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
 
     # set the style
     sns.set(style=SN_STYLE)
 
     # create a frequency by year, month
-    df['year_month'] = df.apply(roll_data.date_to_month_year_period, axis=1)
+    df['year_month'] = df.apply(roll.date_to_month_year_period, axis=1)
     ax = df.groupby(df.year_month)[common.DETAILS_COL].count().plot(marker='o')
     ax.autoscale(True)
 
@@ -71,13 +72,13 @@ def plt_transactions_and_totals_by_month(save=False, file_name='plt_transactions
     sns.set(style=SN_STYLE)
 
     # get the data
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
 
     # clear empty days
     df = df[df[common.SOURCE_COL] != 'NOTHING']
 
     # month and year period
-    df['year_month'] = df.apply(roll_data.date_to_month_year_period, axis=1)
+    df['year_month'] = df.apply(roll.date_to_month_year_period, axis=1)
 
     trans_pc = 'No. of transactions as % of total'
     total_pc = 'Total value of transactions as % of total'
@@ -116,7 +117,7 @@ def plt_total_receipts_by_week_and_term(save=False, file_name='plt_total_receipt
     sns.set(style=SN_STYLE)
 
     # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     df = df[df[common.SOURCE_COL] != 'NOTHING']
 
     # tick range in pence (divisible by 240, which is £1)
@@ -148,7 +149,7 @@ def plt_total_receipts_by_week_and_term_as_pc_of_year_total(save=False,
     sns.set(style=SN_STYLE)
 
     # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     df = df[df[common.SOURCE_COL] != 'NOTHING']
 
     # total for the year
@@ -173,7 +174,7 @@ def plt_transactions_count_by_week_and_term(save=False, file_name='plt_transacti
     sns.set(style=SN_STYLE)
 
     # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     df = df[df[common.SOURCE_COL] != 'NOTHING']
 
     for term, term_group in df.groupby(common.TERM_COL, sort=False):
@@ -197,7 +198,7 @@ def plt_transactions_count_by_week_and_term_as_pc_of_year_total(save=False,
     sns.set(style=SN_STYLE)
 
     # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     df = df[df[common.SOURCE_COL] != 'NOTHING']
 
     # total for the year
@@ -223,7 +224,7 @@ def plt_transactions_total_as_pc_of_term(save=False, file_name='plt_transactions
     sns.set(style=SN_STYLE)
 
     # get data and remove 'NOTHING' values
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     df = df[df[common.SOURCE_COL] != 'NOTHING']
 
     for term, term_group in df.groupby(common.TERM_COL, sort=False):
@@ -250,7 +251,7 @@ def plt_sheriff_total_by_week(term_name='Michaelmas', save=False, file_name='plt
     sns.set(style=SN_STYLE)
 
     # get data
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
     term_df = df[df[common.TERM_COL] == term_name]
 
     # columns and index based on number of weeks in the term
@@ -290,7 +291,7 @@ def plt_terms_business_radar(save=False, file_name='plt_terms_business_radar.png
         the amount of business (transactions) and total amount of receipts. """
 
     # get the data
-    df = roll_data.roll_with_entities_df()
+    df = roll.roll_with_entities_df()
 
     # create an empty data frame to hold the summary data
     categories = ['Days', 'Transactions', 'Income']
@@ -303,7 +304,7 @@ def plt_terms_business_radar(save=False, file_name='plt_terms_business_radar.png
     days = {}
 
     # create a Period from the date
-    df['Period'] = df.apply(roll_data.date_to_period, axis=1)
+    df['Period'] = df.apply(roll.date_to_period, axis=1)
 
     # get the  start and end dates for each term
     for term, term_group in df.groupby(common.TERM_COL):

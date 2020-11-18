@@ -3,7 +3,7 @@
     An Excel file with multiple sheets is useful for sharing with academics etc. 
 """
 
-from receipt_roll import roll_data
+from receipt_roll.data import roll
 import pandas as pd
 import settings
 from receipt_roll import common
@@ -18,9 +18,9 @@ def generate_report():
     common.have_compare_data()
 
     # get the data frames
-    df_sums = roll_data.daily_sums_df()
-    df_roll = roll_data.roll_with_entities_df()
-    df_compare = roll_data.compare_daily_sums_df()
+    df_sums = roll.daily_sums_df()
+    df_roll = roll.roll_with_entities_df()
+    df_compare = roll.compare_daily_sums_df()
 
     # write to an Excel file
     with pd.ExcelWriter(settings.RECEIPT_ROLL_EXCEL) as writer:
