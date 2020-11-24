@@ -1,4 +1,4 @@
-# Introduction
+unit# Introduction
 
 This is the code and data for the 'Digital Humanities meets Medieval Financial Records: 
 The Receipt Rolls of the Irish Exchequer' project. 
@@ -19,6 +19,13 @@ A module that contains all the Python files for processing the data.
 
 A number of unit tests with particular emphasis on areas that extract monetary values
 and entities like people and places.
+
+```
+python -m unittest tests/test_extract_person.py
+python -m unittest tests/test_extract_place.py
+python -m unittest tests/test_pence_to_psd.py
+python -m unittest tests/test_psd_to_pence.py 
+```
 
 ## Generating data
 

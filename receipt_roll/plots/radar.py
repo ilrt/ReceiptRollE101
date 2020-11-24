@@ -41,7 +41,7 @@ def plot_radar(categories, values, title, colour, save=False, file_name='radar.p
     save_or_show(save, file_name, file_format)
 
 
-def plt_terms_business_radar(save=False, file_name='plt_terms_business_radar.png', file_format='png'):
+def plt_terms_business_radar(save=False, file_name='plt_terms_business_radar.png', file_format='png', fig_num=1):
     """ Create four radar charts that show the relationship, for each term, between the length of the term,
         the amount of business (transactions) and total amount of receipts. """
 
@@ -99,7 +99,6 @@ def plt_terms_business_radar(save=False, file_name='plt_terms_business_radar.png
     colours = ['#F06292', '#FFB74D', '#64B5F6', '#81C784']
 
     # create a chart for each term
-    fig_num = 4
     for idx, term in enumerate(common.TERMS):
         values = radar_df.loc[:, term].values.flatten().tolist()
         plt_file_name = "{}_{}_{}".format(fig_num, term.lower(), file_name)

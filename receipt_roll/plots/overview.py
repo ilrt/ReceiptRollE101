@@ -242,6 +242,31 @@ def plt_source_term_heat_map(save=True, title='Payments per term by source',
     save_or_show(save=save, plot_file_name=file)
 
 
+def plt_source_term_pc_heat_map(save=True, title='Payments per term by source',
+                                 x_label="Total", y_label="Source", is_long_title=False,
+                                 file='total_payments_source_heatmap.png', fig_size=(10, 10)):
+    """ General heat map plot that shows the source of payments and the total values. """
+
+    df = roll.source_term_payments_pc_matrix_df()
+
+    # df_psd = df.applymap(money.pence_to_psd)
+
+    plt.figure(figsize=fig_size)
+    plt.rcParams['font.family'] = FONT_NAME
+    with sns.axes_style('white'):
+        hm = sns.heatmap(df, annot=True, cmap='Oranges', cbar=False, fmt='.1f', annot_kws={'size': ANNOTATION_FONT_SIZE})
+        hm.set_yticklabels(hm.get_yticklabels(), rotation=0)
+
+    # plot labels
+    set_labels(x_label, y_label)
+
+    # plot title
+    title_text(title, is_long_title)
+
+    # show or save the image to file
+    save_or_show(save=save, plot_file_name=file)
+
+
 def plt_payments_days_swarm(save=True, title='Payments per day', x_label="Day of the week", y_label="Payment",
                             is_long_title=False, file='payments_day_swarm.png', fig_size=PLOT_DIMENSIONS, log=True):
     """ Swarm plot showing the distribution of payments for each day. Each term has a different color."""

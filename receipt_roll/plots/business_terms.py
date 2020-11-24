@@ -8,7 +8,8 @@ import seaborn as sns
 
 from receipt_roll import common, money
 from receipt_roll.data import roll
-from receipt_roll.plots.base import save_or_show, set_labels_title, SN_STYLE
+from receipt_roll.plots.base import save_or_show, set_labels_title, SN_STYLE, FONT_NAME, PLOT_DIMENSIONS, set_labels, \
+    title_text
 from receipt_roll.plots.radar import plot_radar
 
 
@@ -63,13 +64,17 @@ def plt_monthly_business_count(save=False, file_name='plt_monthly_business.png',
     save_or_show(save, file_name, file_format)
 
 
-def plt_transactions_and_totals_by_month(save=False, file_name='plt_transactions_and_totals_by_month.png',
-                                         file_format='png'):
+def plt_transactions_and_totals_by_month(save=True, title='No. of transactions and their total value, per month, '
+                                                          'as a % of the total for the year',
+                                         x_label="Months", y_label="% of total", is_long_title=False,
+                                         file='plt_transactions_and_totals_by_month.png', fig_size=PLOT_DIMENSIONS):
     """ Plot the total count of transactions (business recorded) and the total value of that business, per month,
         as a % of the total count of transactions and the total value of business for the whole financial year. """
 
     # set the style
-    sns.set(style=SN_STYLE)
+    sns.set(style=SN_STYLE, font=FONT_NAME)
+
+    plt.figure(figsize=fig_size)
 
     # get the data
     df = roll.roll_with_entities_df()
@@ -99,11 +104,14 @@ def plt_transactions_and_totals_by_month(save=False, file_name='plt_transactions
     ax = matrix.plot(marker='o')
     ax.autoscale(True)
 
-    # add labels etc.
-    set_labels_title('Months', '% of total', 'No. of transactions and their total value, \nper month, as a % of the '
-                                             'total for the year')
+    # plot labels
+    set_labels(x_label, y_label)
 
-    save_or_show(save, file_name, file_format)
+    # plot title
+    title_text(title, is_long_title)
+
+    # show or save the image to file
+    save_or_show(save=save, plot_file_name=file)
 
 
 # ---------- Weekly look at totals and business (line plots)
@@ -215,13 +223,17 @@ def plt_transactions_count_by_week_and_term_as_pc_of_year_total(save=False,
     save_or_show(save, file_name, file_format)
 
 
-def plt_transactions_total_as_pc_of_term(save=False, file_name='plt_transactions_total_as_pc_of_term.png',
-                                         file_format='png'):
+def plt_transactions_total_as_pc_of_term(save=True, x_label='Week', y_label='% of term total', fig_no=1,
+                                         fig_size=PLOT_DIMENSIONS, is_long_title=False,
+                                         title="{}. {}\n No. of transactions and total receipts as % of the term total",
+                                         file_name='{}_{}_plt_transactions_total_as_pc_of_term.png'):
     """ Plot each term with the total value and amount of transactions as a percentage of the total for
         that term rather than the year. """
 
     # set the style
-    sns.set(style=SN_STYLE)
+    sns.set(style=SN_STYLE, font=FONT_NAME)
+
+    plt.figure(figsize=fig_size)
 
     # get data and remove 'NOTHING' values
     df = roll.roll_with_entities_df()
@@ -237,25 +249,33 @@ def plt_transactions_total_as_pc_of_term(save=False, file_name='plt_transactions
         values_sum = term_group.groupby(common.WEEK_COL)[common.PENCE_COL].sum() / total_sum * 100
         sns.lineplot(y=values_sum, x=values_sum.index, label='Total receipts as %', marker='o')
 
-        # add labels etc.
-        set_labels_title('Week', '% of term total',
-                         '{}\n Number of weekly transactions and total receipts as a % of the term total'.format(term))
-        plt_file_name = "{}_{}".format(term.lower(), file_name)
-        save_or_show(save, plt_file_name, file_format)
+        title_t = title.format(fig_no, term)
+        file_name_t = file_name.format(fig_no, term)
+
+        # plot labels
+        set_labels(x_label, y_label)
+
+        # plot title
+        title_text(title_t, is_long_title)
+
+        # show or save the image to file
+        save_or_show(save=save, plot_file_name=file_name_t)
+
+        fig_no = fig_no + 1
 
 
-def plt_sheriff_total_by_week(term_name='Michaelmas', save=False, file_name='plt_sheriff_total_by_week.png',
-                              file_format='png'):
-
+def plt_sheriff_total_by_week(term_name='Michaelmas', fig_no=1, save=True, is_long_title=False,
+                              title="{}. Value of receipts returned by sheriffs in {}", x_label="Week",
+                              y_label="Value of receipts", file_name='{}_plt_sheriff_total_by_week.png'):
     # set the style
-    sns.set(style=SN_STYLE)
+    sns.set(style=SN_STYLE, font=FONT_NAME)
 
     # get data
     df = roll.roll_with_entities_df()
     term_df = df[df[common.TERM_COL] == term_name]
 
     # columns and index based on number of weeks in the term
-    cols = ['Weekly total sum', 'Weekly sum from sheriff']
+    cols = ['Weekly sum', 'Weekly sum from sheriff']
     weeks_of_term = np.arange(term_df[common.WEEK_COL].min(), term_df[common.WEEK_COL].max())
     totals_df = pd.DataFrame(np.zeros(shape=(len(weeks_of_term), len(cols))), columns=cols, index=weeks_of_term)
 
@@ -276,11 +296,62 @@ def plt_sheriff_total_by_week(term_name='Michaelmas', save=False, file_name='plt
         ticks_labels.append(money.pence_to_psd(x))
     plt.yticks(ticks_range, ticks_labels)
 
-    # add labels etc.
-    set_labels_title('Week', 'Value of receipts',
-                     'Value of receipts returned by sheriffs in {}'.format(term_name))
+    # plot labels
+    set_labels(x_label, y_label)
 
-    save_or_show(save, file_name, file_format)
+    # plot title
+    title_text(title.format(fig_no, term_name), is_long_title)
+
+    # show or save the image to file
+    save_or_show(save=save, plot_file_name=file_name.format(fig_no))
+
+    fig_no = fig_no + 1
+
+
+def plt_sheriff_total_by_week_pc(term_name='Michaelmas', fig_no=1, save=True, is_long_title=False,
+                                 title="{}. Weekly value of receipts returned {}", x_label="Week",
+                                 y_label="Percentage value of receipts", file_name='{}_plt_sheriff_total_by_week.png'):
+    # set the style
+    sns.set(style=SN_STYLE, font=FONT_NAME)
+
+    # get data
+    df = roll.roll_with_entities_df()
+    term_df = df[df[common.TERM_COL] == term_name]
+    term_total = df[df[common.TERM_COL] == term_name][common.PENCE_COL].sum()
+
+    # columns and index based on number of weeks in the term
+    cols = ['Total', 'Sheriff']
+    weeks_of_term = np.arange(term_df[common.WEEK_COL].min(), term_df[common.WEEK_COL].max())
+    totals_df = pd.DataFrame(np.zeros(shape=(len(weeks_of_term), len(cols))), columns=cols, index=weeks_of_term)
+
+    # find sheriffs ...
+    for week, week_group in term_df.groupby(common.WEEK_COL):
+        week_total = week_group[common.PENCE_COL].sum()
+        sheriff_total = week_group[week_group[common.DETAILS_COL].str.contains('sheriff')][common.PENCE_COL].sum()
+        totals_df.at[week, cols[0]] = week_total / term_total * 100
+        totals_df.at[week, cols[1]] = sheriff_total / term_total * 100
+
+    totals_df.plot()
+
+    # max_value = totals_df[cols[0]].max()
+    # top_range = (math.ceil(max_value / 12000)) * 12000
+    # ticks_range = np.arange(0, 21)
+    #
+    # ticks_labels = []
+    # for x in np.nditer(ticks_range.T):
+    #     ticks_labels.append(x)
+    # plt.yticks(ticks_range, ticks_labels)
+
+    # plot labels
+    set_labels(x_label, y_label)
+
+    # plot title
+    title_text(title.format(fig_no, term_name), is_long_title)
+
+    # show or save the image to file
+    save_or_show(save=save, plot_file_name=file_name.format(fig_no, term_name.lower()))
+
+    fig_no = fig_no + 1
 
 
 # ---------- Radar plots

@@ -170,6 +170,47 @@ def source_term_payments_matrix_df():
     return matrix
 
 
+def source_term_payments_pc_matrix_df():
+    # get the data
+    df = roll_with_entities_df()
+
+    # shorten the label
+    df = df.replace(['ENGLISH DEBTS BY THE MERCHANTS OF LUCCA'], 'MERCHANTS OF LUCCA')
+
+    # columns
+    terms_names = terms_for_column()
+
+    # indexes (sources)
+    sources_names = df[common.SOURCE_COL].unique()
+
+    # create a matrix with values set to zero
+    matrix = pd.DataFrame(np.zeros(shape=(len(sources_names), len(terms_names))), columns=terms_names,
+                          index=sources_names)
+
+    year_total = df['Pence'].sum()
+
+    # group by term
+    group_by_term = df.groupby(common.TERM_COL)
+
+    # iterate over the terms
+    for term, term_group in group_by_term:
+
+        # for each term, group by source of income, and iterate over each source
+        for source, source_group in term_group.groupby(common.SOURCE_COL):
+            # get the total for that source
+            total = source_group[common.PENCE_COL].sum()
+            # update the matrix
+            matrix.at[source, term] = total / year_total * 100
+
+    # remove 'NOTHING' as a source
+    matrix = matrix.drop(index='NOTHING').sort_index()
+
+    # change the source name (index) to title case
+    matrix.index = matrix.index.map(str.title)
+
+    return matrix
+
+
 def days_of_week_total_by_term():
     # get the data
     df = roll_with_entities_df()

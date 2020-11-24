@@ -20,7 +20,7 @@ class TestExtractPlaces(unittest.TestCase):
 
     def test_4(self):
         self.assertEqual(extract_entities.extract_people('John Ringere, 1 mark for a false claim against J. de '
-                                                         'Fresingfeld.'), 'John Ringere; J. de Fresingfeld')
+                                                         'Fresingfeld.'), 'John Ringere;J. de Fresingfeld')
 
     def test_5(self):
         self.assertEqual(extract_entities.extract_people('Richard fitz John, ½ mark to have a writ.'),
@@ -49,7 +49,7 @@ class TestExtractPlaces(unittest.TestCase):
     def test_10(self):
         self.assertEqual(extract_entities.extract_people('Farm of the lands of Thomas de Arundel, 20s. by Richard '
                                                          'Botild.'),
-                         'Thomas de Arundel; Richard Botild')
+                         'Thomas de Arundel;Richard Botild')
 
     def test_11(self):
         self.assertEqual(extract_entities.extract_people('Farm of the mills of Taghyanewy, 10s. by Edusam Inmaulouz.'),
@@ -62,7 +62,7 @@ class TestExtractPlaces(unittest.TestCase):
     def test_13(self):
         self.assertEqual(extract_entities.extract_people('Ralph de Monthermer, earl, and J. his wife, £6 of the '
                                                          'arrears of their account by F., seneschal.'),
-                         'Ralph de Monthermer, earl; F., seneschal')
+                         'Ralph de Monthermer, earl;F., seneschal')
 
     def test_14(self):
         self.assertEqual(extract_entities.extract_people('The villata of Loughsewdy, 30s. for the escape of Reginald '
@@ -90,13 +90,13 @@ class TestExtractPlaces(unittest.TestCase):
     def test_19(self):
         self.assertEqual(extract_entities.extract_people('Of the issues of the lands late of Cristiana de Mariscis at '
                                                          'Killimen [?], 40s., by William Molroni.'),
-                         'Cristiana de Mariscis at Killimen; William Molroni')
+                         'Cristiana de Mariscis at Killimen;William Molroni')
 
     def test_20(self):
         self.assertEqual(extract_entities.extract_people('Richard de Peveneseie, seneschal, 10 marks of the arrears '
                                                          'of his account for John fitz H., by John fitz John de la '
                                                          'Hide.'),
-                         'Richard de Peveneseie, seneschal; John fitz H.; John fitz John de la Hide')
+                         'Richard de Peveneseie, seneschal;John fitz H.;John fitz John de la Hide')
 
     # def test_21(self):
     #     self.assertEqual(extract_entities.extract_people('Adam de Cromelin, sheriff, £17.6s.8d. of the arrears of his '
@@ -111,7 +111,7 @@ class TestExtractPlaces(unittest.TestCase):
     def test_23(self):
         self.assertEqual(extract_entities.extract_people(
             'Robert de Maundeville and Roger de Burford, 26s.8d. of a fine for trespass.'),
-                         'Robert de Maundeville; Roger de Burford')
+                         'Robert de Maundeville;Roger de Burford')
 
 
 if __name__ == '__main__':
