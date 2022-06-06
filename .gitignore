@@ -1,4 +1,5 @@
 venv/
+.myenv
 .idea
 data/roll_*.xml
 data/roll_*.csv

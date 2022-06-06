@@ -3,6 +3,37 @@
 This is the code and data for the 'Digital Humanities meets Medieval Financial Records: 
 The Receipt Rolls of the Irish Exchequer' project. 
 
+## Setup the environment
+
+Create a virtual environment and activate it, e.g.
+
+```
+python -m venv .myenv
+source .myenv/bin/activate
+```
+
+Install the dependencies:
+
+```
+pip install pip --upgrade
+pip install -r requirements.txt
+```
+
+## Generate the data
+
+On the first run this can take a while as NLTK downloads various corpora.
+The script will process the text of a transcript, create various CSV files and, ultimately,
+an Excel spreadsheet. These files are found in the `data` directory.
+
+```
+python generate_data.py
+```
+
+## Generating plots
+
+This will generate the plots used in the blog posts and the paper published in 
+_Irish Economic and Social History_.
+
 ## Project Structure
 
 ### data
@@ -13,7 +44,8 @@ the Python scripts albeit the `.gitignore` omits them from the repository.
 
 ### receipt_roll
 
-A module that contains all the Python files for processing the data.
+A module that contains all the Python files for processing the data. These files are 
+found in the _plots_ directory.
 
 ### tests
 
