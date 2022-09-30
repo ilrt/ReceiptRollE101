@@ -3,7 +3,7 @@ cycler==0.10.0
 et-xmlfile==1.0.1
 fonttools==4.33.3
 jdcal==1.4.1
-joblib==1.1.0
+joblib==1.2.0
 kiwisolver==1.1.0
 matplotlib==3.5.2
 nltk==3.7
